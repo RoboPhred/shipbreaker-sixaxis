@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>RoboPhredDev.Shipbreaker.SixAxis</RootNamespace>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx.Harmony">
+      <HintPath>.\externals\BepInEx.Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>.\externals\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx" CopyToPublishDirectory="Never">
+      <HintPath>.\externals\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine" CopyToPublishDirectory="Never">
+      <HintPath>.\externals\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule" CopyToPublishDirectory="Never">
+      <HintPath>.\externals\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Carbon.Core.Unity">
+      <HintPath>.\externals\Carbon.Core.Unity.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+</Project>
