@@ -25,8 +25,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             SixAxisPlugin.Instance = this;
 
             this.ApplyPatches();
-            WmInputInterceptor.Enable();
 
+            InputAggregator.Initialize();
+            InputHandler.Initialize();
+            WmInputInterceptor.Initialize();
         }
 
         // Old experiment, should save this elsewhere

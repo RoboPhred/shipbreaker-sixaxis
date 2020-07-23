@@ -35,12 +35,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             UnityEngine.Debug.Log("[SixAxis]: " + sb.ToString().Replace("\n", "\n\t"));
 
-            sb.Append("\n\n");
+            // sb.Append("\n\n");
             // File.AppendAllText(Logging.LogFilePath, sb.ToString());
-            var stream = new StreamWriter(Logging.LogFilePath, true);
-            stream.WriteLine(sb.ToString());
-            stream.Flush();
-            stream.Close();
         }
     }
 }
