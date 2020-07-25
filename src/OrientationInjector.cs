@@ -1,4 +1,7 @@
 
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using BBI;
 using BBI.Unity.Game;
 using HarmonyLib;
@@ -9,17 +12,53 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
     [HarmonyPatch(typeof(BBI.OrientationController), "HandleAxisRotation")]
     static class OrientationInjector
     {
+        // static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        // {
+        //     var found = false;
+        //     foreach (var instruction in instructions)
+        //     {
+        //         yield return instruction;
+        //         if (found)
+        //         {
+        //             continue;
+        //         }
+
+        //         // Look for the call to HandleRollAudio and hyjack the value of 'vector' after it.
+        //         // TODO: Probably want to do this right after 'vector = LynxControls.Instance.GameplayActions.RotateBody.Vector;'
+
+        //         if (instruction.opcode != OpCodes.Call)
+        //         {
+        //             continue;
+        //         }
+        //         var method = (MethodInfo)instruction.operand;
+        //         if (method.Name != "HandleRollAudio")
+        //         {
+        //             continue;
+        //         }
+
+        //         // Our target vector is at local index 0.
+        //         // TODO: Create a new Vec3 from our input and run stloc.0
+        //         // yield return new CodeInstruction(OpCodes.Stloc_0);
+
+        //     }
+        // }
+
         static void Postfix(OrientationController __instance)
         {
+            // We have 3 axes of control, but OrientationController is only set up for 2 (with hard buttons for roll)
+            // To get all 3 simultanious actions, we reproduce some of the original axis handling code to caluclate our new values.
+
+            // We might be able to do away with this by hyjacking GameplayActions.RotateBody, but that is set up as a 2 axis input and we need 3.
+
             ApplyRotation(__instance, new Vector3(InputHandler.RZ, InputHandler.RX, -InputHandler.RY));
         }
 
         static void ApplyRotation(OrientationController orientationController, Vector3 vec)
         {
+            // The following code was pilfered from OrientationController.HandleAxisRotation
 
             // TODO: Something is wrong with this, rotation along one side of one axis is half the speed of the other.  All axes seem slower than usual control input
 
-            // The following code was pilfered from OrientationController.HandleAxisRotation
             float deltaTime = Mathf.Clamp(Time.deltaTime, 0.0f, Reflection.GetPrivateField<float>(orientationController, "m_MaxDeltaTime"));
             var sensitivityCurve = Reflection.GetPrivateField<AnimationCurve>(orientationController, "m_ControllerSensitivityCurve");
             var controllerSensitivity = Reflection.GetPrivateProperty<Vector3>(orientationController, "ControllerSensitivity");
@@ -63,6 +102,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             }
             else
             {
+                // Probably don't need this here, handled by the original HandleAxisRotation
                 var constrained = mGrabController.LeftHand.ConstraintsEnabled && (double)mGrabController.LeftHand.GrabMassRatio > 0.0 || mGrabController.RightHand.ConstraintsEnabled && (double)mGrabController.RightHand.GrabMassRatio > 0.0;
                 mRigidbodyReference.angularDrag = constrained ? 0.0f : m_FreeFloatAngularDrag;
             }
