@@ -46,7 +46,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         static Vector3 ApplySixAxisRotation(Vector3 vector)
         {
-            Logging.Log("Applying sixaxis rotation");
+            // TODO: Merge our input with existing input
             var rotation = new Vector3(InputHandler.RZ, InputHandler.RX, -InputHandler.RY);
             return rotation;
         }
