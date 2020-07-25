@@ -9,6 +9,14 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
     static class InputHandler
     {
+        public static float X { get; set; }
+        public static float Y { get; set; }
+        public static float Z { get; set; }
+
+        public static float RX { get; set; }
+        public static float RY { get; set; }
+        public static float RZ { get; set; }
+
         public static void Initialize()
         {
             Logging.Log("Initializing InputHandler");
@@ -54,45 +62,45 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
                 var allValues = valueData.ValueSetStates.SelectMany(x => x).ToArray();
 
-                var x = TryGetScaledValue(allValues, (ushort)GenericDesktopUsage.X);
+                var x = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.X);
                 if (x.HasValue)
                 {
-                    InputAggregator.Instance.X = x.Value;
+                    X = x.Value;
                 }
 
-                var y = TryGetScaledValue(allValues, (ushort)GenericDesktopUsage.Y);
+                var y = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Y);
                 if (y.HasValue)
                 {
-                    InputAggregator.Instance.Y = y.Value;
+                    Y = y.Value;
                 }
 
-                var z = TryGetScaledValue(allValues, (ushort)GenericDesktopUsage.Z);
+                var z = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Z);
                 if (z.HasValue)
                 {
-                    InputAggregator.Instance.Z = z.Value;
+                    Z = z.Value;
                 }
 
-                var rx = TryGetScaledValue(allValues, (ushort)GenericDesktopUsage.Rx);
+                var rx = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Rx);
                 if (rx.HasValue)
                 {
-                    InputAggregator.Instance.RX = rx.Value;
+                    RX = rx.Value;
                 }
 
-                var ry = TryGetScaledValue(allValues, (ushort)GenericDesktopUsage.Ry);
+                var ry = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Ry);
                 if (ry.HasValue)
                 {
-                    InputAggregator.Instance.RY = ry.Value;
+                    RY = ry.Value;
                 }
 
-                var rz = TryGetScaledValue(allValues, (ushort)GenericDesktopUsage.Rz);
+                var rz = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Rz);
                 if (rz.HasValue)
                 {
-                    InputAggregator.Instance.RZ = rz.Value;
+                    RZ = rz.Value;
                 }
             }
         }
 
-        private static int? TryGetScaledValue(HidValueState[] allValues, ushort usage)
+        private static float? TryGetNormalizedValue(HidValueState[] allValues, ushort usage)
         {
             var state = allValues.FirstOrDefault(x => x.Value.UsageAndPage.Usage == usage);
             if (state == null)
@@ -101,7 +109,24 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             }
             try
             {
-                return state.ScaledValue;
+                if (!state.ScaledValue.HasValue)
+                {
+                    return null;
+                }
+                var value = state.ScaledValue.Value;
+                var min = (float)state.Value.MinPhysicalValue;
+                var max = (float)state.Value.MaxPhysicalValue;
+
+                // Cant find any documentation on what a 'scaled value' actually is.
+                // Mimicing the chromium gamepad code found at 
+                //  https://chromium.googlesource.com/chromium/src/+/refs/tags/70.0.3524.1/device/gamepad/raw_input_gamepad_device_win.cc
+                // Seems to imply the value is relative to the physical value of the joystick.
+                // Best guess is the scaled value is calculating the logical value back to physical value units.
+
+                // The following algorithm is what chromium uses to normalize its gamepad axis.
+                //  Seems to be getting value as a percentage of the total range of the physical value,
+                //  then reinterpreting it so that min is -1 and max is 1.
+                return (2.0f * (value - min) / (max - min)) - 1.0f;
             }
             catch (Win32ErrorException)
             {

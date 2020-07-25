@@ -22,8 +22,14 @@
     <Reference Include="UnityEngine.CoreModule" CopyToPublishDirectory="Never">
       <HintPath>.\externals\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule" CopyToPublishDirectory="Never">
+      <HintPath>.\externals\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
     <Reference Include="Carbon.Core.Unity">
       <HintPath>.\externals\Carbon.Core.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="BBI.Unity.Game">
+      <HintPath>.\externals\BBI.Unity.Game.dll</HintPath>
     </Reference>
   </ItemGroup>
 

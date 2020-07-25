@@ -26,7 +26,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             this.ApplyPatches();
 
-            InputAggregator.Initialize();
             InputHandler.Initialize();
             WmInputInterceptor.Initialize();
         }
