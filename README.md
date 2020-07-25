@@ -26,5 +26,7 @@ which restricts the game to only supporting at most 5 axes. In particular, the g
 
 # TODO
 
+Button inputs for actions (cutter, tethers, and so on)
 Configurable bindings of any controller axis to any game axis
 Configure exact joystick device identifiers to support dual joystick setups
+Sensitivity controls per-axis. Currently falls back to using the sensitivity of the last input device used.
