@@ -50,7 +50,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         {
             // var translation = new Vector3(-InputHandler.X, -InputHandler.Z, InputHandler.Y);
             var translation = new Vector3(InputHandler.X, -InputHandler.Z, -InputHandler.Y);
-            return translation;
+            return VectorUtils.Average(translation, vector);
         }
     }
 }
