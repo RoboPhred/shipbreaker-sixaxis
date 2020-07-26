@@ -14,5 +14,15 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 z = (a.z + b.z) / 2.0f
             };
         }
+
+        public static Vector3 Clamp(Vector3 vector, float min, float max)
+        {
+            return new Vector3
+            {
+                x = Mathf.Clamp(vector.x, min, max),
+                y = Mathf.Clamp(vector.y, min, max),
+                z = Mathf.Clamp(vector.z, min, max)
+            };
+        }
     }
 }

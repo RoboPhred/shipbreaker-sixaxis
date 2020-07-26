@@ -48,7 +48,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         {
             // TODO: Merge our input with existing input
             var rotation = new Vector3(InputHandler.RZ, InputHandler.RX, -InputHandler.RY);
-            return VectorUtils.Average(rotation, vector);
+            return VectorUtils.Clamp(rotation + vector, -1, 1);
         }
     }
 }
