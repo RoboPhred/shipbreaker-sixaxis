@@ -14,6 +14,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
         public static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+        [DllImport("user32", SetLastError = true)]
+        public static extern bool RegisterRawInputDevices(RawInputDevice[] pRawInputDevices, uint uiNumDevices, uint cbSize);
+
         public static WndProcDelegate SetWindowProc(IntPtr windowHandle, WndProcDelegate wndProc)
         {
             var handlePtr = Marshal.GetFunctionPointerForDelegate(wndProc);
@@ -24,5 +27,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native
                 oldHandler = User32.SetWindowLongPtr64(windowHandle, -4, handlePtr);
             return (WndProcDelegate)Marshal.GetDelegateForFunctionPointer(oldHandler, typeof(WndProcDelegate));
         }
+
+
     }
 }

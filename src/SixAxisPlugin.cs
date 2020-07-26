@@ -1,6 +1,9 @@
 using System.IO;
+using System.Runtime.InteropServices;
 using BepInEx;
 using HarmonyLib;
+using RoboPhredDev.Shipbreaker.SixAxis.Input;
+using RoboPhredDev.Shipbreaker.SixAxis.Native;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
@@ -25,6 +28,18 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             SixAxisPlugin.Instance = this;
 
             this.ApplyPatches();
+
+            // TODO: Load what devices we want from a config.
+
+            var devices = new RawInputDevice[] {
+                new RawInputDevice {
+                    usUsagePage = (ushort)UsagePage.GenericDesktop,
+                    usUsage = (ushort)GenericDesktopUsage.MultiAxisController,
+                    dwFlags = 0,
+                    hwndTarget = User32.GetActiveWindow()
+                }
+            };
+            User32.RegisterRawInputDevices(devices, (uint)devices.Length, (uint)Marshal.SizeOf(typeof(RawInputDevice)));
 
             InputHandler.Initialize();
             WmInputInterceptor.Initialize();

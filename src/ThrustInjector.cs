@@ -48,7 +48,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         static Vector3 ApplySixAxisTranslation(Vector3 vector)
         {
-            // var translation = new Vector3(-InputHandler.X, -InputHandler.Z, InputHandler.Y);
             var translation = new Vector3(InputHandler.X, -InputHandler.Z, -InputHandler.Y);
             return VectorUtils.Clamp(translation + vector, -1, 1);
         }

@@ -14,6 +14,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
     {
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
+            // TODO: We should make a post-processor for HandleRollAudio and trigger roll audio if
+            //  - It has not been triggered
+            //  - we have a roll axis value
+
             var found = false;
             foreach (var instruction in instructions)
             {
@@ -46,7 +50,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         static Vector3 ApplySixAxisRotation(Vector3 vector)
         {
-            // TODO: Merge our input with existing input
             var rotation = new Vector3(InputHandler.RZ, InputHandler.RX, -InputHandler.RY);
             return VectorUtils.Clamp(rotation + vector, -1, 1);
         }

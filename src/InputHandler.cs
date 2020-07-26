@@ -24,9 +24,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             WmInputInterceptor.OnInput += HandleInput;
 
             var windowHandle = WmInputInterceptor.WindowHandle;
-
-            // Generic Device, Axis Controller
-            RawInputDevice.RegisterDevice(new HidUsageAndPage((ushort)UsagePage.GenericDesktop, (ushort)GenericDesktopUsage.MultiAxisController), RawInputDeviceFlags.None, windowHandle);
         }
 
         private static void HandleInput(object sender, WmInputEventArgs e)
