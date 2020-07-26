@@ -5,7 +5,7 @@ using HarmonyLib;
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
 
-    [BepInPlugin("net.robophreddev.shipbreaker.SixAxis", "Six Axis Joystick support for Shipbreaker", "1.0.0.0")]
+    [BepInPlugin("net.robophreddev.shipbreaker.SixAxis", "Six Axis Joystick support for Shipbreaker", "1.0.1.0")]
     public class SixAxisPlugin : BaseUnityPlugin
     {
         public static SixAxisPlugin Instance;

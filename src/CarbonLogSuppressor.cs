@@ -9,9 +9,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
     {
         static bool Prefix()
         {
-            // TODO: Should only be turned on when debugging.
-            Logging.Log("Supressing carbon logs");
-            return false;
+            // Should only be turned off when debugging.
+            // Logging.Log("Supressing carbon logs");
+            // return false;
+            return true;
         }
     }
 }
