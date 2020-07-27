@@ -50,6 +50,15 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         static Vector3 ApplySixAxisRotation(Vector3 vector)
         {
+            // If gameplay actions are disabled, do not send data.
+            // Unlike ThrustController, orientation handles input while paused just fine.
+            // However, the base game never registers input during this time, so we should
+            // mirror it.
+            if (LynxControls.Instance.GameplayActions.Enabled == false)
+            {
+                return vector;
+            }
+
             var rotation = new Vector3(InputHandler.RZ, InputHandler.RX, -InputHandler.RY);
             return VectorUtils.Clamp(rotation + vector, -1, 1);
         }

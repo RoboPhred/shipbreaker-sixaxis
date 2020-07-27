@@ -31,6 +31,9 @@
     <Reference Include="BBI.Unity.Game">
       <HintPath>.\externals\BBI.Unity.Game.dll</HintPath>
     </Reference>
+    <Reference Include="InControl">
+      <HintPath>.\externals\InControl.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <PropertyGroup>

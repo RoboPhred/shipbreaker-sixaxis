@@ -8,7 +8,7 @@ using RoboPhredDev.Shipbreaker.SixAxis.Native;
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
 
-    [BepInPlugin("net.robophreddev.shipbreaker.SixAxis", "Six Axis Joystick support for Shipbreaker", "1.0.2.0")]
+    [BepInPlugin("net.robophreddev.shipbreaker.SixAxis", "Six Axis Joystick support for Shipbreaker", "1.0.3.0")]
     public class SixAxisPlugin : BaseUnityPlugin
     {
         public static SixAxisPlugin Instance;

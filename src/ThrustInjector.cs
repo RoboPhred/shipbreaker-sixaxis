@@ -48,7 +48,15 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         static Vector3 ApplySixAxisTranslation(Vector3 vector)
         {
+            // If gameplay actions are disabled, do not send data.
+            // The game will corrupt if it gets any thrust vector input while paused.
+            if (LynxControls.Instance.GameplayActions.Enabled == false)
+            {
+                return vector;
+            }
+
             var translation = new Vector3(InputHandler.X, -InputHandler.Z, -InputHandler.Y);
+
             return VectorUtils.Clamp(translation + vector, -1, 1);
         }
     }

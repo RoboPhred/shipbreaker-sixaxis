@@ -1,5 +1,9 @@
 # Changes
 
+## 1.0.3
+
+- Fix gun animation break and eventual crash when input is received when paused or tabbed out.
+
 ## 1.0.2
 
 - Combine sixaxis input with existing game input.
