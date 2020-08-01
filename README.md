@@ -56,7 +56,6 @@ Here are some example bindings:
   - Menu Back: Numpad 1
   - Previous group: Numpad 7
   - Next group: Numpad 9
-  -
 
 ## Configuration
 
@@ -98,9 +97,9 @@ devices:
 
 The `axes` section is a list of input axes and the game axes they control. Each list item supports a few keys:
 
-_axisUsage_: This should be the HID Usage code of the axis for this input. A list of usage codes can be found [here](https://www.freebsddiary.org/APC/usb_hid_usages.php).
-_gameAxis_: The game axes this input is being bound to. Available values are `X`, `Y`, and `Z` for thrusters, `Rx`, `Ry`, and `Rz` for yaw / pitch / roll.
-_invert_: An optional value indicating whether to invert the axis. If set to `true`, the value is inverted.
+- `axisUsage`: This should be the HID Usage code of the axis for this input. A list of usage codes can be found [here](https://www.freebsddiary.org/APC/usb_hid_usages.php).
+- `gameAxis`: The game axes this input is being bound to. Available values are `X`, `Y`, and `Z` for thrusters, `Rx`, `Ry`, and `Rz` for yaw / pitch / roll.
+- `invert`: An optional value indicating whether to invert the axis. If set to `true`, the value is inverted.
 
 ## Axis Sensitivity
 
@@ -122,6 +121,6 @@ all of the game's dead zones and sensitivity curves are left intact, and apply t
 - Axis curves and sensitivity
 - Configure exact joystick device identifiers to support dual joystick setups.
 
-### Joystick requests welcome
+## Joystick requests welcome
 
 I love weird input devices. If you know of another interesting joystick or controller you would like to see support for, please let me know!
