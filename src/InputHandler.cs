@@ -88,19 +88,31 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         private static void HandleMessage(object sender, WindowMessageEventArgs e)
         {
-            var data = RawInputData.FromHandle(e.LParam);
-
-            // Game already registers and uses Mouse, so pass that back.
-            if (data.Device.UsageAndPage == HidUsageAndPage.Mouse)
+            // Handle WM_INPUT
+            if (e.Message != 0x00FF)
             {
                 return;
             }
 
-            // Mark the message as handled and return 0 for consumed.
-            e.Result = IntPtr.Zero;
+            try
+            {
+                var data = RawInputData.FromHandle(e.LParam);
 
-            ProcessInput(data);
-            // ProcessSpaceMouse(data);
+                // Game already registers and uses Mouse, so pass that back.
+                if (data.Device.UsageAndPage == HidUsageAndPage.Mouse)
+                {
+                    return;
+                }
+
+                // Mark the message as handled and return 0 for consumed.
+                e.Result = IntPtr.Zero;
+
+                ProcessInput(data);
+            }
+            catch (Exception ex)
+            {
+                Logging.Log($"Failed to process window message: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         private static void ProcessInput(RawInputData data)

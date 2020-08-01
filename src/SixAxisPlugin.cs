@@ -60,7 +60,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 var mapping = mappings.FirstOrDefault(x => x.ContainsDevice(device.VendorId, device.ProductId));
                 if (mapping == null)
                 {
-                    return;
+                    continue;
                 }
 
                 Logging.Log(new Dictionary<string, string>
