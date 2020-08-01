@@ -67,7 +67,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 {
                     {"VendorId", device.VendorId.ToString("X")},
                     {"ProductId", device.ProductId.ToString("X")},
-                    {"ConfigFile", mapping.FilePath},
+                    {"ConfigFile", mapping.FileName},
                 }, $"Found input mapping for device {device.VendorId.ToString("X")}:{device.ProductId.ToString("X")}");
 
                 usageAndPages.Add(device.UsageAndPage);

@@ -9,7 +9,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
     class InputMapping
     {
         [YamlIgnore()]
-        public string FilePath { get; set; }
+        public string FileName { get; set; }
 
         [YamlMember(Alias = "devices")]
         public List<DeviceIdentifier> Devices { get; set; } = new List<DeviceIdentifier>();
@@ -27,7 +27,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
             var text = File.ReadAllText(filePath);
             var deserializer = new Deserializer();
             var mapping = deserializer.Deserialize<InputMapping>(text);
-            mapping.FilePath = filePath;
+            mapping.FileName = Path.GetFileName(filePath);
             return mapping;
         }
 
