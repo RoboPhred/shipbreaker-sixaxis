@@ -1,27 +1,18 @@
 # Shipbreaker SixAxis
 
-A mod for Hardpace: Shipbreaker that enables six axis controllers.
+A mod for Hardpace: Shipbreaker that enables binding any joystick or HID axis device to any game axis.
 
-Uniquely, this mod gives Shipbreaker all 6 axes of control, meaning joystick input can independently control:
+While axis binding is on the Shipbreaker roadmap, this mod differs in two significant ways:
 
-- Forward / Backward
-- Left / Right
-- Up / Down
-- Pitch
-- Roll
-- Yaw
+- All axes are present, including roll, and all axes can be used simultaniously without modifier keys
+- Any input device can be used, not just the gamepad-aligned joystick-typed devices the game supports.
 
-## Compatible devices
-
-Currently, this mod is hard coded for 3DConnexion [SpaceMouse](https://www.3dconnexion.com/products/spacemouse.html) devices, but should work for compatible devices.
-
-In theory, any device with the HID type of `GenericDesktop : MultiAxisController` should work, but currently the axes are hard coded to fit the orientation of the SpaceMouse. Other devices may use different axis mapping, and not be compatible.
-
-Support for such devices will be available once axes are configurable. See [Planned features](#planned-features).
+This mod was primarily created for use with 3DConnexion [SpaceMouse](https://www.3dconnexion.com/products/spacemouse.html) devices, which do not identify
+as joysticks and provide all six axes of control simultaniously. However, the mod is configurable and can be made to work with any HID input device.
 
 ## Releases
 
-Download the mod [here](https://github.com/RoboPhred/shipbreaker-sixaxis/releases)
+Download the mod [here](https://github.com/RoboPhred/shipbreaker-sixaxis/releases).
 
 ## Installation
 
@@ -33,21 +24,13 @@ Requires [BepInEx 5.0.1](https://github.com/BepInEx/BepInEx/releases) or later.
 4. Create a folder named `SixAxis` in the BepInEx/Plugins folder.
 5. Extract the release zip file to this folder.
 
-## Configuration and Sensitivity
-
-Because this mod injects input into the existing control system, the sensitivity sliders still work.
-However, the game will use whatever slider corresponds to the last input it received, not including the SixAxis device.
-This means the game will typically use the mouse sensitivity values, unless you plug in a controller the game recognizes and use it for a short period.
-
-Axis inversion in the game is implemented in its controller library, so the invert axes options will not apply to this mod. Axis configuration [is planned](#planned-features).
-
-### Configuring the SpaceMouse
+## Note for SpaceMouse users
 
 By default, the SpaceMouse driver maps its controls to various utility functions when it does not recognize the program in use. Among other things, it maps the pitch rotation to the scroll wheel. This will conflict with in-game mappings of the scroll wheel, including changing the active scanner mode. You may need to remap the SpaceMouse axes using its software, or unmap the scroll wheel in Shipbreaker.
 
-Be sure to calibrate your device before use. While the SpaceMouse is a remarkably precise device, it tends to require calibration to zero correctly.
+Be sure to calibrate your device before use. While the SpaceMouse is a remarkably precise device, it tends to require calibration for its deadzone to function correctly.
 
-## Recommended usage
+### Recommended keyboard bindings
 
 As the SpaceMouse provides all 6 axes, it completely supplants a standard computer mouse. I have found the best way to play with it is with one hand on the spacemouse, one hand on the numpad.
 
@@ -73,6 +56,59 @@ Here are some example bindings:
   - Menu Back: Numpad 1
   - Previous group: Numpad 7
   - Next group: Numpad 9
+  -
+
+## Configuration
+
+Out of the box, this mod is preconfigured for 3DConnexion [SpaceMouse](https://www.3dconnexion.com/products/spacemouse.html) devices. If you have such a device, no additional
+configuration is needed. However, this mod can be configured to support any HID input device, including non-joystick axis devices.
+
+### Creating a configuration
+
+All device configurations are stored in the `device-configs` folder included with the mod. All files in this folder are read on startup, and any matching devices
+are automatically configured.
+
+The config files are in the YAML format, which follows a few rules:
+
+- Named values are stored as a key and value pair, seperated by a colon; `key: value`.
+- Dashes `-` are used to indicate items in a list.
+- Spaces are used to nest values inside other values; typically, 2 spaces are used.
+
+To get you started, the mod includes a `3DConnexion.yml` config file, configured for a variety of 3DConnexion six axis controllers.
+
+The config file has two sections:
+
+#### Devices
+
+The `devices` section of the config file is a list of all input devices this config will apply to. It should contain a list, and each
+list item should have two properties: `vendorId` and `productId`. Set these to the vendor and product IDs of the device you wish to target. Since most
+vendor and product IDs are given has hex codes, you can prefix the value with `0x` to provide a hex value directly.
+
+For example, here is a devices section that handles 2 devices: One with an ID of 4D:5C and another with 12:42
+
+```yaml
+devices:
+  - vendorId: 0x4D
+    productId: 0x5C
+  - vendorId: 0x12
+    productId: 0x42
+```
+
+#### Axes
+
+The `axes` section is a list of input axes and the game axes they control. Each list item supports a few keys:
+
+_axisUsage_: This should be the HID Usage code of the axis for this input. A list of usage codes can be found [here](https://www.freebsddiary.org/APC/usb_hid_usages.php).
+_gameAxis_: The game axes this input is being bound to. Available values are `X`, `Y`, and `Z` for thrusters, `Rx`, `Ry`, and `Rz` for yaw / pitch / roll.
+_invert_: An optional value indicating whether to invert the axis. If set to `true`, the value is inverted.
+
+## Axis Sensitivity
+
+Because this mod injects input into the existing control system, the sensitivity sliders still work.
+However, the game will use whatever slider corresponds to the last input it received, not including the SixAxis device.
+This means the game will typically use the mouse sensitivity values, unless you plug in a controller the game recognizes and use it for a short period.
+
+Adjusting curves for axis inputs is planned, but not currently available. See [planned features](#planned-features).
 
 ## How it works
 
@@ -83,9 +119,8 @@ all of the game's dead zones and sensitivity curves are left intact, and apply t
 ## Planned features
 
 - Button inputs for actions (cutter, tethers, and so on).
-- Configurable bindings of any controller axis to any game axis, including curves and inversion.
+- Axis curves and sensitivity
 - Configure exact joystick device identifiers to support dual joystick setups.
-- Sensitivity controls per-axis. Currently falls back to using the sensitivity of the last input device used.
 
 ### Joystick requests welcome
 
