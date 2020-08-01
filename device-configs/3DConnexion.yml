@@ -1,0 +1,86 @@
+devices:
+  - # CadMouse Pro Wireless
+    vendorId: 0x256F
+    productId: 0xC654
+  - # CadMouse Pro Wireless Left
+    vendorId: 0x256F
+    productId: 0xC657
+  - # SpaceMouse Enterprise
+    vendorId: 0x256F
+    productId: 0xC633
+  - # CadMouse
+    vendorId: 0x256F
+    productId: 0xC650
+  - # CadMouse Wireless
+    vendorId: 0x256F
+    productId: 0xC651
+  - # Universal Receiver
+    vendorId: 0x256F
+    productId: 0xC652
+  - # SpaceMouse Compact
+    vendorId: 0x256F
+    productId: 0xC635
+  - # SpaceMouse Pro Wireless Receiver
+    vendorId: 0x256F
+    productId: 0xC632
+  - # SpaceMouse Pro Wireless (cabled)
+    vendorId: 0x256F
+    productId: 0xC631
+  - # SpaceMouse Wireless Receiver
+    vendorId: 0x256F
+    productId: 0xC62F
+  - # SpaceMouse Wireless (cabled)
+    vendorId: 0x256F
+    productId: 0xC62E
+  - # SpaceMouse Pro
+    vendorId: 0x046D
+    productId: 0xC62B
+  - # SpacePilot Pro
+    vendorId: 0x046D
+    productId: 0xC629
+  - # Space Explorer
+    vendorId: 0x046D
+    productId: 0x627
+  - # Space Navigator
+    vendorId: 0x046D
+    productId: 0x626
+  - # Space Navigator (notebook)
+    vendorId: 0x046D
+    productId: 0x628
+  - # Space Traveler
+    vendorId: 0x046D
+    productId: 0x623
+  - # Space Pilot
+    vendorId: 0x046D
+    productId: 0x625
+  - # Spaceball 5000
+    vendorId: 0x046D
+    productId: 0x621
+  - # SpaceMouse Plus
+    vendorId: 0x046D
+    productId: 0x603
+  - # SpaceMouse Plus XT
+    vendorId: 0x046D
+    productId: 0x603
+  - # Space Classic
+    vendorId: 0x046D
+    productId: 0x606
+  - # CadMan
+    vendorId: 0x046D
+    productId: 0x605
+axes:
+  - axisUsage: 0x30 # GenericDesktop => X
+    gameAxis: X
+  - axisUsage: 0x31 # GenericDesktop => Y
+    gameAxis: Z
+    invert: true
+  - axisUsage: 0x32 # GenericDesktop => Z
+    gameAxis: Y
+    invert: true
+  - axisUsage: 0x33 # GenericDesktop => Rx
+    gameAxis: Ry
+  - axisUsage: 0x34 # GenericDesktop => Ry
+    gameAxis: Rz
+    invert: true
+  - axisUsage: 0x35 # GenericDesktop => Rz
+    gameAxis: Rx

@@ -1,34 +1,94 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Linearstar.Windows.RawInput;
 using Linearstar.Windows.RawInput.Native;
-using RoboPhredDev.Shipbreaker.SixAxis.Input;
+using RoboPhredDev.Shipbreaker.SixAxis.Config;
+using UnityEngine;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
+    class InputIdentifier : IEquatable<InputIdentifier>
+    {
+        public int VendorId { get; set; }
+        public int ProductId { get; set; }
+        public ShipbreakerAxisType Axis { get; set; }
+
+        public InputIdentifier(int vendorId, int productId, ShipbreakerAxisType axis)
+        {
+            this.VendorId = vendorId;
+            this.ProductId = productId;
+            this.Axis = axis;
+        }
+
+        public bool Equals(InputIdentifier other)
+        {
+            return this.VendorId == other.VendorId && this.ProductId == other.ProductId && this.Axis == other.Axis;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.VendorId ^ this.ProductId ^ this.Axis.GetHashCode();
+        }
+    }
 
     static class InputHandler
     {
-        public static float X { get; set; }
-        public static float Y { get; set; }
-        public static float Z { get; set; }
+        private static List<InputMapping> sInputMappings;
 
-        public static float RX { get; set; }
-        public static float RY { get; set; }
-        public static float RZ { get; set; }
+        private static Dictionary<InputIdentifier, float> sInputs = new Dictionary<InputIdentifier, float>();
 
-        public static void Initialize()
+        public static Vector3 Translation
         {
-            Logging.Log("Initializing InputHandler");
-
-            WmInputInterceptor.OnInput += HandleInput;
-
-            var windowHandle = WmInputInterceptor.WindowHandle;
+            get
+            {
+                var xInputs = (from input in sInputs
+                               where input.Key.Axis == ShipbreakerAxisType.X
+                               select input.Value).ToArray();
+                var yInputs = (from input in sInputs
+                               where input.Key.Axis == ShipbreakerAxisType.Y
+                               select input.Value).ToArray();
+                var zInputs = (from input in sInputs
+                               where input.Key.Axis == ShipbreakerAxisType.Z
+                               select input.Value).ToArray();
+                return new Vector3(
+                    Mathf.Clamp(xInputs.Sum(), -1, 1),
+                    Mathf.Clamp(yInputs.Sum(), -1, 1),
+                    Mathf.Clamp(zInputs.Sum(), -1, 1)
+                );
+            }
         }
 
-        private static void HandleInput(object sender, WmInputEventArgs e)
+        public static Vector3 Rotation
         {
-            var data = e.Data;
+            get
+            {
+                var xInputs = (from input in sInputs
+                               where input.Key.Axis == ShipbreakerAxisType.Rx
+                               select input.Value).ToArray();
+                var yInputs = (from input in sInputs
+                               where input.Key.Axis == ShipbreakerAxisType.Ry
+                               select input.Value).ToArray();
+                var zInputs = (from input in sInputs
+                               where input.Key.Axis == ShipbreakerAxisType.Rz
+                               select input.Value).ToArray();
+                return new Vector3(
+                    Mathf.Clamp(xInputs.Sum(), -1, 1),
+                    Mathf.Clamp(yInputs.Sum(), -1, 1),
+                    Mathf.Clamp(zInputs.Sum(), -1, 1)
+                );
+            }
+        }
+
+        public static void Initialize(List<InputMapping> inputMappings)
+        {
+            sInputMappings = inputMappings;
+            WindowMessageInterceptor.OnMessage += HandleMessage;
+        }
+
+        private static void HandleMessage(object sender, WindowMessageEventArgs e)
+        {
+            var data = RawInputData.FromHandle(e.LParam);
 
             // Game already registers and uses Mouse, so pass that back.
             if (data.Device.UsageAndPage == HidUsageAndPage.Mouse)
@@ -36,64 +96,59 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 return;
             }
 
-            e.Handled = true;
+            // Mark the message as handled and return 0 for consumed.
+            e.Result = IntPtr.Zero;
 
-            // Check to see if its from a multi axis controller.
-            if (data.Device.UsageAndPage.UsagePage != (ushort)UsagePage.GenericDesktop || data.Device.UsageAndPage.Usage != (ushort)GenericDesktopUsage.MultiAxisController)
+            ProcessInput(data);
+            // ProcessSpaceMouse(data);
+        }
+
+        private static void ProcessInput(RawInputData data)
+        {
+            var hidData = data as RawInputHidData;
+            if (hidData == null)
             {
                 return;
             }
 
-
-            // TODO: Lots of these properties mask user32 lookups to decode data that we should cache.
-            //  Remove the RawInput.Sharp library and implement everything ourselves so we can cache the device data. 
-
-            var valueData = data as RawInputHidData;
-            if (valueData != null)
+            foreach (var mapping in GetMappingsForDevice(hidData.Device))
             {
-                // RawInput.Sharp reports all values even though they may not apply to this particular report.
-                // We need to check for failure to read the values.
+                ProcessInputMapping(hidData, mapping);
+            }
+        }
 
-                // This is remarkably inefficient, lots of hid.dll and user32.dll calls doing what we could be caching
-                //  or doing ourselves.  Should replace RawInput.Sharp with directly using user32 apis.
+        private static IEnumerable<InputMapping> GetMappingsForDevice(RawInputDevice device)
+        {
+            return from mapping in sInputMappings
+                   where mapping.ContainsDevice(device.VendorId, device.ProductId)
+                   select mapping;
+        }
 
-                var allValues = valueData.ValueSetStates.SelectMany(x => x).ToArray();
+        private static void ProcessInputMapping(RawInputHidData data, InputMapping mapping)
+        {
+            var allValues = data.ValueSetStates.SelectMany(x => x).ToArray();
 
-                var x = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.X);
-                if (x.HasValue)
+            // TODO: This relies on a complex process of encountering errors, encoding those errors into exceptions, and throwing exceptions
+            //  On the whole, this is probably very slow.
+            // We can speed up the whole thing by forgoing RawInput.Sharp and implementing it ourselves, caching device data and checking
+            //  what reports each axis is under.
+
+            foreach (var axis in mapping.Axes)
+            {
+                var maybeValue = TryGetNormalizedValue(allValues, axis.AxisUsage);
+                if (!maybeValue.HasValue)
                 {
-                    X = x.Value;
+                    continue;
                 }
 
-                var y = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Y);
-                if (y.HasValue)
+                var value = maybeValue.Value;
+                if (axis.Invert)
                 {
-                    Y = y.Value;
+                    value = -value;
                 }
 
-                var z = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Z);
-                if (z.HasValue)
-                {
-                    Z = z.Value;
-                }
-
-                var rx = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Rx);
-                if (rx.HasValue)
-                {
-                    RX = rx.Value;
-                }
-
-                var ry = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Ry);
-                if (ry.HasValue)
-                {
-                    RY = ry.Value;
-                }
-
-                var rz = TryGetNormalizedValue(allValues, (ushort)GenericDesktopUsage.Rz);
-                if (rz.HasValue)
-                {
-                    RZ = rz.Value;
-                }
+                var inputId = new InputIdentifier(data.Device.VendorId, data.Device.ProductId, axis.GameAxis);
+                sInputs[inputId] = value;
             }
         }
 
@@ -127,6 +182,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             }
             catch (Win32ErrorException)
             {
+                // This is really stupid, but RawInput.Sharp does not check what report we have or if the value is included in the report.
+                //  Generating the exception just to ignore it takes a lot of time, we should implement the check to avoid it.
                 return null;
             }
         }
