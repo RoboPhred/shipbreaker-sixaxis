@@ -68,6 +68,9 @@ devices:
   - # CadMan
     vendorId: 0x046D
     productId: 0x605
+  - # SpaceNavigator
+    vendorId: 0x046D
+    productId: 0xC626
 axes:
   - axisUsage: 0x30 # GenericDesktop => X
     gameAxis: X
