@@ -33,6 +33,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             if (insertPoint == -1)
             {
+                Logging.Log("Failed to patch ThrustController.Update.  The injection point was not found.  Thrust commands will not function.");
                 return instructions;
             }
 
@@ -42,6 +43,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             instructionList.Insert(insertPoint++, new CodeInstruction(OpCodes.Ldloc_1));
             instructionList.Insert(insertPoint++, new CodeInstruction(OpCodes.Call, typeof(ThrustInjector).GetMethod("ApplySixAxisTranslation", BindingFlags.Static | BindingFlags.NonPublic)));
             instructionList.Insert(insertPoint++, new CodeInstruction(OpCodes.Stloc_1));
+
+            Logging.Log("Successfully patched ThrustController.Update");
 
             return instructionList;
         }

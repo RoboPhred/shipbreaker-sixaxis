@@ -83,7 +83,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         {
             var harmony = new Harmony("net.robophreddev.shipbreaker.SixAxis");
             harmony.PatchAll();
-            Logging.Log("Patch succeeded");
         }
     }
 }

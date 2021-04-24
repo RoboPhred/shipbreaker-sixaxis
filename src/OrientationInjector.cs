@@ -46,6 +46,15 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 yield return new CodeInstruction(OpCodes.Call, typeof(OrientationInjector).GetMethod("ApplySixAxisRotation", BindingFlags.Static | BindingFlags.NonPublic));
                 yield return new CodeInstruction(OpCodes.Stloc_0);
             }
+
+            if (found)
+            {
+                Logging.Log("Successfully patched OrientationController.HandleAxisRotation");
+            }
+            else
+            {
+                Logging.Log("Failed to patch OrientationController.HandleAxisLocation.  The injection point was not found.  Rotation commands will not function.");
+            }
         }
 
         static Vector3 ApplySixAxisRotation(Vector3 vector)
