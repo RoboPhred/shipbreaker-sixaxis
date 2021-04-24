@@ -40,34 +40,34 @@ devices:
     productId: 0xC629
   - # Space Explorer
     vendorId: 0x046D
-    productId: 0x627
+    productId: 0xC627
   - # Space Navigator
     vendorId: 0x046D
-    productId: 0x626
+    productId: 0xC626
   - # Space Navigator (notebook)
     vendorId: 0x046D
-    productId: 0x628
+    productId: 0xC628
   - # Space Traveler
     vendorId: 0x046D
-    productId: 0x623
+    productId: 0xC623
   - # Space Pilot
     vendorId: 0x046D
-    productId: 0x625
+    productId: 0xC625
   - # Spaceball 5000
     vendorId: 0x046D
-    productId: 0x621
+    productId: 0xC621
   - # SpaceMouse Plus
     vendorId: 0x046D
-    productId: 0x603
+    productId: 0xC603
   - # SpaceMouse Plus XT
     vendorId: 0x046D
-    productId: 0x603
+    productId: 0xC603
   - # Space Classic
     vendorId: 0x046D
-    productId: 0x606
+    productId: 0xC606
   - # CadMan
     vendorId: 0x046D
-    productId: 0x605
+    productId: 0xC605
   - # SpaceNavigator
     vendorId: 0x046D
     productId: 0xC626
