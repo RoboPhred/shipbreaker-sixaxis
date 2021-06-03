@@ -2,10 +2,10 @@
 
 A mod for Hardpace: Shipbreaker that enables binding any joystick or HID axis device to any game axis.
 
-While axis binding is on the Shipbreaker roadmap, this mod differs in two significant ways:
+While a limited axis binding is present in Shipbreaker, this mod differs in two significant ways:
 
 - All axes are present, including roll, and all axes can be used simultaniously without modifier keys
-- Any input device can be used, not just the gamepad-aligned joystick-typed devices the game supports.
+- Any input device can be used, not just the gamepad-aligned joystick-typed devices the game supports
 
 This mod was primarily created for use with 3DConnexion [SpaceMouse](https://www.3dconnexion.com/products/spacemouse.html) devices, which do not identify
 as joysticks and provide all six axes of control simultaniously. However, the mod is configurable and can be made to work with any HID input device.
