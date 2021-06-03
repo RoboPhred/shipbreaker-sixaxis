@@ -68,7 +68,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 return vector;
             }
 
-            return VectorUtils.Clamp(vector + InputHandler.Rotation, -1f, 1f);
+            vector = VectorUtils.Clamp(vector + InputHandler.Rotation, -1f, 1f);
+
+            return vector;
         }
     }
 }

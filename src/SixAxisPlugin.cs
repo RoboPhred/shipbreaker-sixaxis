@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BBI.Unity.Game;
 using BepInEx;
 using HarmonyLib;
 using Linearstar.Windows.RawInput;
@@ -38,6 +39,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             RegisterDevices(mappings, windowHandle);
             InputHandler.Initialize(mappings);
             WindowMessageInterceptor.Enable(windowHandle);
+        }
+
+        public void ReceivedControllerInput()
+        {
+            LynxControls.Instance.GameplayActions.LastInputType = InControl.BindingSourceType.MouseBindingSource;
         }
 
         private List<InputMapping> LoadInputMappings()

@@ -44,13 +44,13 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             {
                 var xInputs = (from input in sInputs
                                where input.Key.Axis == ShipbreakerAxisType.X
-                               select input.Value).ToArray();
+                               select input.Value);
                 var yInputs = (from input in sInputs
                                where input.Key.Axis == ShipbreakerAxisType.Y
-                               select input.Value).ToArray();
+                               select input.Value);
                 var zInputs = (from input in sInputs
                                where input.Key.Axis == ShipbreakerAxisType.Z
-                               select input.Value).ToArray();
+                               select input.Value);
                 return new Vector3(
                     Mathf.Clamp(xInputs.Sum(), -1, 1),
                     Mathf.Clamp(yInputs.Sum(), -1, 1),
@@ -65,13 +65,13 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             {
                 var xInputs = (from input in sInputs
                                where input.Key.Axis == ShipbreakerAxisType.Rx
-                               select input.Value).ToArray();
+                               select input.Value);
                 var yInputs = (from input in sInputs
                                where input.Key.Axis == ShipbreakerAxisType.Ry
-                               select input.Value).ToArray();
+                               select input.Value);
                 var zInputs = (from input in sInputs
                                where input.Key.Axis == ShipbreakerAxisType.Rz
-                               select input.Value).ToArray();
+                               select input.Value);
                 return new Vector3(
                     Mathf.Clamp(xInputs.Sum(), -1, 1),
                     Mathf.Clamp(yInputs.Sum(), -1, 1),
@@ -161,6 +161,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
                 var inputId = new InputIdentifier(data.Device.VendorId, data.Device.ProductId, axis.GameAxis);
                 sInputs[inputId] = value;
+
+                SixAxisPlugin.Instance.ReceivedControllerInput();
             }
         }
 
