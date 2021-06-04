@@ -17,9 +17,14 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             }
         }
 
+        public static void Initialize()
+        {
+            File.Delete(LogFilePath);
+        }
+
         public static void Log(string message, params object[] args)
         {
-            Logging.Log(new Dictionary<string, string>(), message, args);
+            Log(new Dictionary<string, string>(), message, args);
         }
 
         public static void Log(IDictionary<string, string> values, string message, params object[] args)
@@ -36,7 +41,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             UnityEngine.Debug.Log("[SixAxis]: " + sb.ToString().Replace("\n", "\n\t"));
 
             sb.Append("\n\n");
-            File.AppendAllText(Logging.LogFilePath, sb.ToString());
+            File.AppendAllText(LogFilePath, sb.ToString());
         }
     }
 }

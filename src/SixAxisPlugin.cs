@@ -30,6 +30,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         void Awake()
         {
             SixAxisPlugin.Instance = this;
+            Logging.Initialize();
 
             this.ApplyPatches();
 
@@ -73,6 +74,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 {
                     {"VendorId", device.VendorId.ToString("X")},
                     {"ProductId", device.ProductId.ToString("X")},
+                    {"DevicePath", device.DevicePath},
                     {"ConfigFile", mapping.FileName},
                 }, $"Found input mapping for device {device.VendorId.ToString("X")}:{device.ProductId.ToString("X")}");
 
