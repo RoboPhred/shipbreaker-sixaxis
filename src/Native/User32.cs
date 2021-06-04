@@ -14,14 +14,16 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW")]
         public static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+
+
         public static WndProcDelegate SetWindowProc(IntPtr windowHandle, WndProcDelegate wndProc)
         {
             var handlePtr = Marshal.GetFunctionPointerForDelegate(wndProc);
             IntPtr oldHandler;
             if (IntPtr.Size == 4)
-                oldHandler = User32.SetWindowLongPtr32(windowHandle, -4, handlePtr);
+                oldHandler = SetWindowLongPtr32(windowHandle, -4, handlePtr);
             else
-                oldHandler = User32.SetWindowLongPtr64(windowHandle, -4, handlePtr);
+                oldHandler = SetWindowLongPtr64(windowHandle, -4, handlePtr);
             return (WndProcDelegate)Marshal.GetDelegateForFunctionPointer(oldHandler, typeof(WndProcDelegate));
         }
     }

@@ -5,9 +5,10 @@ using System.Linq;
 using BBI.Unity.Game;
 using BepInEx;
 using HarmonyLib;
-using Linearstar.Windows.RawInput;
 using RoboPhredDev.Shipbreaker.SixAxis.Config;
+using RoboPhredDev.Shipbreaker.SixAxis.Input;
 using RoboPhredDev.Shipbreaker.SixAxis.Native;
+using RoboPhredDev.Shipbreaker.SixAxis.Native.RID;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
@@ -61,10 +62,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         private void RegisterDevices(List<InputMapping> mappings, IntPtr windowHandle)
         {
             var devices = RawInputDevice.GetDevices();
-            var usageAndPages = new HashSet<HidUsageAndPage>();
-            foreach (var device in devices)
+            var registrations = new List<DeviceRegistration>();
+            foreach (var device in devices.OfType<RawInputHidDevice>())
             {
-                var mapping = mappings.FirstOrDefault(x => x.ContainsDevice(device.VendorId, device.ProductId));
+                var mapping = mappings.Find(x => x.ContainsDevice(device.VendorId, device.ProductId));
                 if (mapping == null)
                 {
                     continue;
@@ -74,17 +75,20 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 {
                     {"VendorId", device.VendorId.ToString("X")},
                     {"ProductId", device.ProductId.ToString("X")},
-                    {"DevicePath", device.DevicePath},
+                    {"DeviceName", device.DeviceName},
                     {"ConfigFile", mapping.FileName},
-                }, $"Found input mapping for device {device.VendorId.ToString("X")}:{device.ProductId.ToString("X")}");
+                }, $"Found input mapping for device {device.VendorId:X}:{device.ProductId:X}");
 
-                usageAndPages.Add(device.UsageAndPage);
+                registrations.Add(new DeviceRegistration
+                {
+                    dwFlags = DeviceFlags.None,
+                    hwndTarget = windowHandle,
+                    usUsage = device.Usage,
+                    usUsagePage = device.UsagePage,
+                });
             }
 
-            foreach (var usage in usageAndPages)
-            {
-                RawInputDevice.RegisterDevice(usage, RawInputDeviceFlags.None, windowHandle);
-            }
+            RIDInterop.RegisterDevices(registrations.ToArray());
         }
 
         private void ApplyPatches()
