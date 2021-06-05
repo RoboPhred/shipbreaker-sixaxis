@@ -17,7 +17,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native
         public static Win32ErrorException FromLastWin32Error()
         {
             var code = Marshal.GetLastWin32Error();
-            var message = Kernel32.FormatMessage(code);
+            var message = MessageFormatter.FormatMessage(code);
             return new Win32ErrorException(code, message);
         }
     }

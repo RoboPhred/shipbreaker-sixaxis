@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Linearstar.Windows.RawInput;
-using Linearstar.Windows.RawInput.Native;
 using RoboPhredDev.Shipbreaker.SixAxis.Config;
+using RoboPhredDev.Shipbreaker.SixAxis.Input;
 using UnityEngine;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
@@ -98,9 +97,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             {
                 var data = RawInputData.FromHandle(e.LParam);
 
-                // Game already registers and uses Mouse, so pass that back.
-                if (data.Device.UsageAndPage == HidUsageAndPage.Mouse)
+                if (data.Device.UsagePage == (uint)UsagePage.GenericDesktop && data.Device.Usage == (uint)GenericDesktopUsage.Mouse)
                 {
+                    // Game already registers and uses Mouse, so pass that back.
                     return;
                 }
 
@@ -117,8 +116,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         private static void ProcessInput(RawInputData data)
         {
-            var hidData = data as RawInputHidData;
-            if (hidData == null)
+            if (!(data is RawInputHidData hidData))
             {
                 return;
             }
@@ -138,67 +136,26 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         private static void ProcessInputMapping(RawInputHidData data, InputMapping mapping)
         {
-            var allValues = data.ValueSetStates.SelectMany(x => x).ToArray();
-
-            // TODO: This relies on a complex process of encountering errors, encoding those errors into exceptions, and throwing exceptions
-            //  On the whole, this is probably very slow.
-            // We can speed up the whole thing by forgoing RawInput.Sharp and implementing it ourselves, caching device data and checking
-            //  what reports each axis is under.
-
             foreach (var axis in mapping.Axes)
             {
-                var maybeValue = TryGetNormalizedValue(allValues, axis.AxisUsage);
-                if (!maybeValue.HasValue)
+                var value = data.GetInputValue(axis.AxisUsage);
+                if (value == null)
                 {
                     continue;
                 }
 
-                var value = maybeValue.Value;
+                var inputId = new InputIdentifier(data.Device.VendorId, data.Device.ProductId, axis.GameAxis);
+
+                var normalizedValue = value.NormalizedValue;
+
                 if (axis.Invert)
                 {
-                    value = -value;
+                    normalizedValue = -normalizedValue;
                 }
 
-                var inputId = new InputIdentifier(data.Device.VendorId, data.Device.ProductId, axis.GameAxis);
-                sInputs[inputId] = value;
+                sInputs[inputId] = normalizedValue;
 
                 SixAxisPlugin.Instance.ReceivedControllerInput();
-            }
-        }
-
-        private static float? TryGetNormalizedValue(HidValueState[] allValues, ushort usage)
-        {
-            var state = allValues.FirstOrDefault(x => x.Value.UsageAndPage.Usage == usage);
-            if (state == null)
-            {
-                return null;
-            }
-            try
-            {
-                if (!state.ScaledValue.HasValue)
-                {
-                    return null;
-                }
-                var value = state.ScaledValue.Value;
-                var min = (float)state.Value.MinPhysicalValue;
-                var max = (float)state.Value.MaxPhysicalValue;
-
-                // Cant find any documentation on what a 'scaled value' actually is.
-                // Mimicing the chromium gamepad code found at 
-                //  https://chromium.googlesource.com/chromium/src/+/refs/tags/70.0.3524.1/device/gamepad/raw_input_gamepad_device_win.cc
-                // Seems to imply the value is relative to the physical value of the joystick.
-                // Best guess is the scaled value is calculating the logical value back to physical value units.
-
-                // The following algorithm is what chromium uses to normalize its gamepad axis.
-                //  Seems to be getting value as a percentage of the total range of the physical value,
-                //  then reinterpreting it so that min is -1 and max is 1.
-                return (2.0f * (value - min) / (max - min)) - 1.0f;
-            }
-            catch (Win32ErrorException)
-            {
-                // This is really stupid, but RawInput.Sharp does not check what report we have or if the value is included in the report.
-                //  Generating the exception just to ignore it takes a lot of time, we should implement the check to avoid it.
-                return null;
             }
         }
     }

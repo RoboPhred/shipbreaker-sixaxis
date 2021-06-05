@@ -1,5 +1,5 @@
 using System;
-using RoboPhredDev.Shipbreaker.SixAxis.Native;
+using RoboPhredDev.Shipbreaker.SixAxis.Native.Window;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
@@ -8,7 +8,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
     {
         public IntPtr? Result { get; set; }
 
-        public uint Message { get; private set; }
+        public uint Message { get; }
         public IntPtr WParam { get; private set; }
         public IntPtr LParam { get; private set; }
 
@@ -36,12 +36,12 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             }
 
             sWindowHandle = windowHandle;
-            sOriginalHandler = User32.SetWindowProc(windowHandle, CustomWndProc);
+            sOriginalHandler = WindowInterop.SetWindowProc(windowHandle, CustomWndProc);
         }
 
         public static void Disable()
         {
-            User32.SetWindowProc(sWindowHandle, sOriginalHandler);
+            WindowInterop.SetWindowProc(sWindowHandle, sOriginalHandler);
             sWindowHandle = IntPtr.Zero;
         }
 

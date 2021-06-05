@@ -7,13 +7,13 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Input
     {
         private readonly DeviceInfoHID deviceInfo;
 
-        public ushort Usage => deviceInfo.usPage;
+        public override ushort Usage => deviceInfo.usUsage;
 
-        public ushort UsagePage => deviceInfo.usUsagePage;
+        public override ushort UsagePage => deviceInfo.usUsagePage;
 
         public RawInputHidDevice(IntPtr handle) : base(handle)
         {
-            var info = RIDInterop.GetRawInputDeviceInfo(handle);
+            var info = RawInputInterop.GetRawInputDeviceInfo(handle);
             if (info.dwType != DeviceType.RIM_TYPEHID)
             {
                 throw new ArgumentException("Handle is not a HID device.");

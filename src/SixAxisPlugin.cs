@@ -7,7 +7,7 @@ using BepInEx;
 using HarmonyLib;
 using RoboPhredDev.Shipbreaker.SixAxis.Config;
 using RoboPhredDev.Shipbreaker.SixAxis.Input;
-using RoboPhredDev.Shipbreaker.SixAxis.Native;
+using RoboPhredDev.Shipbreaker.SixAxis.Native.Window;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.RID;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
@@ -35,7 +35,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             this.ApplyPatches();
 
-            var windowHandle = User32.GetActiveWindow();
+            var windowHandle = WindowInterop.GetActiveWindow();
 
             var mappings = LoadInputMappings();
             RegisterDevices(mappings, windowHandle);
@@ -88,7 +88,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 });
             }
 
-            RIDInterop.RegisterDevices(registrations.ToArray());
+            RawInputInterop.RegisterDevices(registrations.ToArray());
         }
 
         private void ApplyPatches()

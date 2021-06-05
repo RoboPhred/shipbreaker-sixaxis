@@ -12,7 +12,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Input
         public IntPtr Handle { get; }
         public string DeviceName { get; }
 
-        public virtual int VendorId
+        public int VendorId
         {
             get
             {
@@ -25,7 +25,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Input
                 return int.Parse(vidStr, NumberStyles.HexNumber);
             }
         }
-        public virtual int ProductId
+        public int ProductId
         {
             get
             {
@@ -39,15 +39,18 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Input
             }
         }
 
+        public abstract ushort UsagePage { get; }
+        public abstract ushort Usage { get; }
+
         protected RawInputDevice(IntPtr handle)
         {
             this.Handle = handle;
-            this.DeviceName = RIDInterop.GetRawInputDeviceName(handle);
+            this.DeviceName = RawInputInterop.GetRawInputDeviceName(handle);
         }
 
-        static RawInputDevice FromHandle(IntPtr handle)
+        public static RawInputDevice FromHandle(IntPtr handle)
         {
-            var deviceInfo = RIDInterop.GetRawInputDeviceInfo(handle);
+            var deviceInfo = RawInputInterop.GetRawInputDeviceInfo(handle);
 
             switch (deviceInfo.dwType)
             {
@@ -64,7 +67,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Input
 
         public static IEnumerable<RawInputDevice> GetDevices()
         {
-            var devices = RIDInterop.GetRawInputDeviceList();
+            var devices = RawInputInterop.GetRawInputDeviceList();
 
             return devices.Select(device => FromHandle(device.hDevice));
         }
