@@ -1,4 +1,4 @@
-namespace RoboPhredDev.Shipbreaker.SixAxis.Input
+namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
     enum GenericDesktopUsage : ushort
     {

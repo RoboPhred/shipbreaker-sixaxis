@@ -6,7 +6,7 @@ using BBI.Unity.Game;
 using BepInEx;
 using HarmonyLib;
 using RoboPhredDev.Shipbreaker.SixAxis.Config;
-using RoboPhredDev.Shipbreaker.SixAxis.Input;
+using RoboPhredDev.Shipbreaker.SixAxis.RawInput;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.Window;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.RID;
 

@@ -1,4 +1,4 @@
-namespace RoboPhredDev.Shipbreaker.SixAxis.Input
+namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
     // https://www.freebsddiary.org/APC/usb_hid_usages.php
     enum UsagePage : ushort

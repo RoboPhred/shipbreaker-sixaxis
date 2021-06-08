@@ -7,13 +7,20 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
     static class HidInterop
     {
         [DllImport("hid")]
-        static extern NtStatus HidP_GetCaps(IntPtr preparsedData, out HidPCaps capabilities);
+        private static extern NtStatus HidP_GetCaps(IntPtr preparsedData, out HidPCaps capabilities);
 
         [DllImport("hid")]
-        static extern NtStatus HidP_GetValueCaps(HidPReportType reportType, [Out] HidPValueCaps[] valueCaps, ref ushort valueCapsLength, IntPtr preparsedData);
+        private static extern NtStatus HidP_GetValueCaps(HidPReportType reportType, [Out] HidPValueCaps[] valueCaps, ref ushort valueCapsLength, IntPtr preparsedData);
 
         [DllImport("hid")]
-        static extern NtStatus HidP_GetScaledUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, out int usageValue, IntPtr preparsedData, byte[] report, uint reportLength);
+        private static extern NtStatus HidP_GetButtonCaps(HidPReportType reportType, [Out] HidPButtonCaps[] buttonCaps, ref ushort buttonCapsLength, IntPtr preparsedData);
+
+        [DllImport("hid")]
+        private static extern NtStatus HidP_GetScaledUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, out int usageValue, IntPtr preparsedData, byte[] report, uint reportLength);
+
+        [DllImport("hid")]
+        private static extern NtStatus HidP_GetUsages(HidPReportType reportType, ushort usagePage, ushort linkCollection, [Out] ushort[] usageList, ref uint usageLength, IntPtr preparsedData, byte[] report, uint reportLength);
+
 
         public static HidPCaps GetCaps(IntPtr preparsedData)
         {
@@ -53,6 +60,34 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
             return valueCaps;
         }
 
+        public static HidPButtonCaps[] GetButtonCaps(HidPReportType reportType, IntPtr preparsedData)
+        {
+            var caps = GetCaps(preparsedData);
+            var count = reportType switch
+            {
+                HidPReportType.HidP_Input => caps.NumberInputValueCaps,
+                HidPReportType.HidP_Output => caps.NumberOutputValueCaps,
+                HidPReportType.HidP_Feature => caps.NumberFeatureValueCaps,
+                _ => throw new ArgumentException("Unknown reportType", nameof(reportType))
+            };
+
+            var buttonCaps = new HidPButtonCaps[count];
+            var result = HidP_GetButtonCaps(reportType, buttonCaps, ref count, preparsedData);
+            if (result != NtStatus.Success)
+            {
+                throw new InvalidOperationException(result.ToString());
+            }
+
+            if (buttonCaps.Length > count)
+            {
+                var newCaps = new HidPButtonCaps[count];
+                Array.Copy(buttonCaps, newCaps, count);
+                buttonCaps = newCaps;
+            }
+
+            return buttonCaps;
+        }
+
         public static int? GetScaledUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, IntPtr preparsedData, byte[] report, uint reportLength)
         {
             var result = HidP_GetScaledUsageValue(reportType, usagePage, linkCollection, usage, out int value, preparsedData, report, reportLength);
@@ -67,6 +102,36 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
             }
 
             return value;
+        }
+        public static ushort[] GetUsages(HidPReportType reportType, ushort usagePage, ushort linkCollection, IntPtr preparsedData, byte[] report, uint reportLength)
+        {
+            uint usageLength = 0;
+            var result = HidP_GetUsages(reportType, usagePage, linkCollection, null, ref usageLength, preparsedData, report, reportLength);
+            if (result == NtStatus.IncompatibleReportId)
+            {
+                return null;
+            }
+
+            // Expect BufferTooSmall when we pass a zero length.  Length will get reset to the number of usages available.
+            if (result != NtStatus.Success && result != NtStatus.BufferTooSmall)
+            {
+                throw new InvalidOperationException(result.ToString());
+            }
+
+            if (usageLength == 0)
+            {
+                return new ushort[0];
+            }
+
+            var usageList = new ushort[usageLength];
+            result = HidP_GetUsages(reportType, usagePage, linkCollection, usageList, ref usageLength, preparsedData, report, reportLength);
+
+            if (result != NtStatus.Success)
+            {
+                throw new InvalidOperationException(result.ToString());
+            }
+
+            return usageList;
         }
     }
 }

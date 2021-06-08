@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoboPhredDev.Shipbreaker.SixAxis.Config;
-using RoboPhredDev.Shipbreaker.SixAxis.Input;
+using RoboPhredDev.Shipbreaker.SixAxis.RawInput;
 using UnityEngine;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
@@ -121,9 +121,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 return;
             }
 
+            ControllerManager.HandleInput(hidData);
+
             foreach (var mapping in GetMappingsForDevice(hidData.Device))
             {
-                ProcessInputMapping(hidData, mapping);
+                ProcessInputMapping(hidData, hidData.Device.UsagePage, mapping);
             }
         }
 
@@ -134,11 +136,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                    select mapping;
         }
 
-        private static void ProcessInputMapping(RawInputHidData data, InputMapping mapping)
+        private static void ProcessInputMapping(RawInputHidData data, ushort usagePage, InputMapping mapping)
         {
             foreach (var axis in mapping.Axes)
             {
-                var value = data.GetInputValue(axis.AxisUsage);
+                var value = data.GetInputValue(new UsageAndPage(usagePage, axis.AxisUsage));
                 if (value == null)
                 {
                     continue;

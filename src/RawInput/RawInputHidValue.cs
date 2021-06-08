@@ -1,7 +1,7 @@
 
 using RoboPhredDev.Shipbreaker.SixAxis.Native.HID;
 
-namespace RoboPhredDev.Shipbreaker.SixAxis.Input
+namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
     class RawInputHidValue
     {

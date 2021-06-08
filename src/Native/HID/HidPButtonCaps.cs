@@ -1,12 +1,10 @@
+
 using System.Runtime.InteropServices;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
 {
-    /// <summary>
-    /// https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/hidpi/ns-hidpi-_hidp_value_caps
-    /// </summary>
     [StructLayout(LayoutKind.Explicit)]
-    struct HidPValueCaps
+    struct HidPButtonCaps
     {
         [FieldOffset(0)]
         public ushort UsagePage;
@@ -31,25 +29,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
         [FieldOffset(15), MarshalAs(UnmanagedType.U1)]
         public bool IsAbsolute;
 
-        [FieldOffset(16), MarshalAs(UnmanagedType.U1)]
-        public bool HasNull;
-        [FieldOffset(18)]
-        public ushort BitSize;
-        [FieldOffset(20)]
-        public ushort ReportCount;
-        [FieldOffset(32)]
-        public uint UnitsExp;
-        [FieldOffset(36)]
-        public uint Units;
-        [FieldOffset(40)]
-        public int LogicalMin;
-        [FieldOffset(44)]
-        public int LogicalMax;
-        [FieldOffset(48)]
-        public int PhysicalMin;
-        [FieldOffset(52)]
-        public int PhysicalMax;
-
+        [FieldOffset(16), MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        readonly int[] Reserved;
         [FieldOffset(56)]
         public HidPCapsRange Range;
         [FieldOffset(56)]

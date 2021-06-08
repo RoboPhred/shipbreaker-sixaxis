@@ -1,7 +1,7 @@
 using System;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.RID;
 
-namespace RoboPhredDev.Shipbreaker.SixAxis.Input
+namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
     class RawInputUnknownData : RawInputData
     {

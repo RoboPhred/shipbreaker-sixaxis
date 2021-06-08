@@ -1,7 +1,7 @@
 
 using System;
 
-namespace RoboPhredDev.Shipbreaker.SixAxis.Input
+namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
     class RawInputMouseDevice : RawInputDevice
     {
@@ -9,7 +9,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Input
         {
         }
 
-        public override ushort UsagePage => (ushort)Input.UsagePage.GenericDesktop;
+        public override ushort UsagePage => (ushort)RawInput.UsagePage.GenericDesktop;
 
         public override ushort Usage => (ushort)GenericDesktopUsage.Mouse;
     }
