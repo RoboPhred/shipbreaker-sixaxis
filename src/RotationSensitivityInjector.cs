@@ -6,7 +6,7 @@ using UnityEngine;
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
     [HarmonyPatch(typeof(BBI.OrientationController), "get_MouseSensitivity")]
-    static class RotationScaleInjector
+    static class RotationSensitivityInjector
     {
         static bool Prefix(BBI.OrientationController __instance, ref Vector3 __result)
         {
@@ -17,7 +17,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 return false;
             }
 
-            __result = new Vector3(1 * LynxControlsUserOptions.MouseSensitivity, 1 * LynxControlsUserOptions.MouseSensitivity, 200 * LynxControlsUserOptions.RollSensitivity);
+            __result = new Vector3(0.7f * LynxControlsUserOptions.MouseSensitivity, 0.7f * LynxControlsUserOptions.MouseSensitivity, 150 * LynxControlsUserOptions.RollSensitivity);
             return false;
         }
     }
