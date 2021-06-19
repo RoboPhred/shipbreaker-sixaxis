@@ -3,7 +3,7 @@ using System;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
-    struct UsagePageAndCollection : IEquatable<UsageAndPage>
+    struct UsagePageAndCollection : IEquatable<PageAndUsage>
     {
         public UsagePageAndCollection(ushort usagePage, ushort linkCollection)
         {
@@ -14,7 +14,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
         public ushort UsagePage { get; }
         public ushort LinkCollection { get; }
 
-        public bool Equals(UsageAndPage other)
+        public bool Equals(PageAndUsage other)
         {
             return UsagePage == other.UsagePage && LinkCollection == other.Usage;
         }

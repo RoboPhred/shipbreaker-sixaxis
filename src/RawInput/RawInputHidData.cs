@@ -8,9 +8,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
     class RawInputHidData : RawInputData
     {
-        private readonly Dictionary<UsageAndPage, RawInputHidValue> inputValues = new();
+        private readonly Dictionary<PageAndUsage, RawInputHidValue> inputValues = new();
 
-        private readonly Dictionary<UsageAndPage, bool> buttonStatus = new();
+        private readonly Dictionary<PageAndUsage, bool> buttonStatus = new();
 
         public unsafe RawInputHidData(IntPtr headerHandle)
         {
@@ -65,8 +65,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
                                 continue;
                             }
 
+                            // We are getting lots of -1s from the legacy spacemouse pro when no input is available.
+                            // Is this normal?  Should we be filtering this out?
+
                             var valueThing = new RawInputHidValue(usage, cap.UsagePage, value.Value, cap);
-                            inputValues.Add(new UsageAndPage(cap.UsagePage, usage), valueThing);
+                            inputValues.Add(new PageAndUsage(cap.UsagePage, usage), valueThing);
                         }
                     }
                 }
@@ -112,7 +115,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 
                         for (var usage = usageMin; usage <= usageMax; usage++)
                         {
-                            buttonStatus.Add(new UsageAndPage(pair.UsagePage, usage), usages.Contains(usage));
+                            buttonStatus.Add(new PageAndUsage(pair.UsagePage, usage), usages.Contains(usage));
                         }
                     }
                 }
@@ -121,17 +124,17 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 
         public override RawInputDevice Device { get; }
 
-        public IEnumerable<KeyValuePair<UsageAndPage, RawInputHidValue>> GetAllValues()
+        public IEnumerable<KeyValuePair<PageAndUsage, RawInputHidValue>> GetAllValues()
         {
             return inputValues;
         }
 
-        public IEnumerable<KeyValuePair<UsageAndPage, bool>> GetAllButtons()
+        public IEnumerable<KeyValuePair<PageAndUsage, bool>> GetAllButtons()
         {
             return buttonStatus;
         }
 
-        public RawInputHidValue GetInputValue(UsageAndPage usageAndPage)
+        public RawInputHidValue GetInputValue(PageAndUsage usageAndPage)
         {
             if (inputValues.TryGetValue(usageAndPage, out var value))
             {
@@ -140,7 +143,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
             return null;
         }
 
-        public bool? GetButtonStatus(UsageAndPage usageAndPage)
+        public bool? GetButtonStatus(PageAndUsage usageAndPage)
         {
             if (buttonStatus.TryGetValue(usageAndPage, out var value))
             {

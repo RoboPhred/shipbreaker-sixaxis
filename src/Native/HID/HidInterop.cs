@@ -71,8 +71,21 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
                 _ => throw new ArgumentException("Unknown reportType", nameof(reportType))
             };
 
+            if (count == 0)
+            {
+                return new HidPButtonCaps[0];
+            }
+            var prevCount = count;
+
             var buttonCaps = new HidPButtonCaps[count];
             var result = HidP_GetButtonCaps(reportType, buttonCaps, ref count, preparsedData);
+            if (result == NtStatus.UsageNotFound)
+            {
+                // FIXME: What device is causing this?
+                // Logging.Log($"WARNING: Got UsageNotFound when querying {reportType} {prevCount} buttons from device.  Assuming no buttons.");
+                return new HidPButtonCaps[0];
+            }
+
             if (result != NtStatus.Success)
             {
                 throw new InvalidOperationException(result.ToString());

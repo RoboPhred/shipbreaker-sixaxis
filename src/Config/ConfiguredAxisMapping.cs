@@ -2,7 +2,7 @@ using YamlDotNet.Serialization;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 {
-    class DeviceAxisMapping
+    class ConfiguredAxisMapping : IAxisMapping
     {
         // TODO: Might have multiple axes with the same usage.
         //  Seems to be seperated by Link / Collection. Is there a raw ID we can get?
@@ -16,5 +16,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 
         [YamlMember(Alias = "gameAxis")]
         public ShipbreakerAxisType GameAxis { get; set; }
+
+        public ushort Usage => this.AxisUsage;
+
+        public float Scale => this.Invert ? -1 : 1;
     }
 }

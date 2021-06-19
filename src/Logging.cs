@@ -22,12 +22,12 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             File.Delete(LogFilePath);
         }
 
-        public static void Log(string message, params object[] args)
+        public static void Log(string message)
         {
-            Log(new Dictionary<string, string>(), message, args);
+            Log(new Dictionary<string, string>(), message);
         }
 
-        public static void Log(IDictionary<string, string> values, string message, params object[] args)
+        public static void Log(IDictionary<string, string> values, string message)
         {
             var sb = new StringBuilder();
             sb.AppendFormat("DateTime={0} ", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"));
@@ -36,7 +36,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 sb.AppendFormat("{0}={1} ", key, values[key]);
             }
             sb.Append("\n");
-            sb.AppendFormat(message, args);
+            sb.Append(message);
 
             UnityEngine.Debug.Log("[SixAxis]: " + sb.ToString().Replace("\n", "\n\t"));
 

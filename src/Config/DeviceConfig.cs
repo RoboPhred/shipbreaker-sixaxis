@@ -6,38 +6,35 @@ using YamlDotNet.Serialization;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 {
-    class InputMapping
+    class DeviceConfig : IInputMap
     {
         [YamlIgnore()]
         public string FileName { get; set; }
 
         [YamlMember(Alias = "devices")]
-        public List<DeviceIdentifier> Devices { get; set; } = new List<DeviceIdentifier>();
+        public List<ConfiguredDeviceSpecification> Devices { get; set; } = new List<ConfiguredDeviceSpecification>();
 
         [YamlMember(Alias = "axes")]
-        public List<DeviceAxisMapping> Axes { get; set; } = new List<DeviceAxisMapping>();
+        public List<ConfiguredAxisMapping> Axes { get; set; } = new List<ConfiguredAxisMapping>();
 
-        public bool ContainsDevice(int vendorId, int productId)
-        {
-            return this.Devices.FirstOrDefault(x => x.VendorIds == vendorId && x.ProductId == productId) != null;
-        }
+        IReadOnlyCollection<IAxisMapping> IInputMap.Axes => this.Axes;
 
-        public static InputMapping Load(string filePath)
+        public static DeviceConfig Load(string filePath)
         {
             var text = File.ReadAllText(filePath);
             var deserializer = new Deserializer();
-            var mapping = deserializer.Deserialize<InputMapping>(text);
+            var mapping = deserializer.Deserialize<DeviceConfig>(text);
             mapping.FileName = Path.GetFileName(filePath);
             return mapping;
         }
 
-        public static List<InputMapping> LoadAllMappings(string directoryPath)
+        public static List<DeviceConfig> LoadAllMappings(string directoryPath)
         {
             var configPaths = from path in Directory.EnumerateFiles(directoryPath)
                               where path.EndsWith(".yaml") || path.EndsWith(".yml")
                               select path;
 
-            var mappings = new List<InputMapping>();
+            var mappings = new List<DeviceConfig>();
             foreach (var path in configPaths)
             {
                 try

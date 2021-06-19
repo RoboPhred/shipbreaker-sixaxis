@@ -1,22 +1,30 @@
 
 using System.Collections.Generic;
+using System.Linq;
 using RoboPhredDev.Shipbreaker.SixAxis.RawInput;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
-    class Controller
+    class InputDevice : IDeviceIdentifier
     {
         public string DeviceName { get; }
+        public int VendorId { get; }
+        public int ProductId { get; }
 
-        private readonly Dictionary<UsageAndPage, float> normalizedAxes = new();
-        private readonly HashSet<UsageAndPage> activeButtons = new();
+        public ushort UsagePage { get; }
 
-        public Controller(string deviceName)
+        private readonly Dictionary<PageAndUsage, float> normalizedAxes = new();
+        private readonly HashSet<PageAndUsage> activeButtons = new();
+
+        public InputDevice(string deviceName, int vendorId, int productId, ushort usagePage)
         {
             DeviceName = deviceName;
+            VendorId = vendorId;
+            ProductId = productId;
+            UsagePage = usagePage;
         }
 
-        public float? GetAxisValue(UsageAndPage axisIdentifier)
+        public float? GetAxisValue(PageAndUsage axisIdentifier)
         {
             if (normalizedAxes.TryGetValue(axisIdentifier, out var value))
             {
@@ -25,7 +33,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             return null;
         }
 
-        public bool GetButtonPressed(UsageAndPage buttonIdentifier)
+        public bool GetButtonPressed(PageAndUsage buttonIdentifier)
         {
             return activeButtons.Contains(buttonIdentifier);
         }
@@ -44,17 +52,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             {
                 if (pair.Value)
                 {
-                    if (activeButtons.Add(pair.Key))
-                    {
-                        Logging.Log("Button pressed: {0}", pair.Key.ToString());
-                    }
+                    activeButtons.Add(pair.Key);
                 }
                 else
                 {
-                    if (activeButtons.Remove(pair.Key))
-                    {
-                        Logging.Log("Button Released: {0}", pair.Key.ToString());
-                    }
+                    activeButtons.Remove(pair.Key);
                 }
             }
         }

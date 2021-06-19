@@ -30,5 +30,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
                 return (2.0f * (ScaledValue - min) / (max - min)) - 1.0f;
             }
         }
+
+        public override string ToString()
+        {
+            return $"{ScaledValue} ({NormalizedValue}, {valueCaps.LogicalMin}-{valueCaps.LogicalMax}, {valueCaps.PhysicalMin}-{valueCaps.PhysicalMax})";
+        }
     }
 }

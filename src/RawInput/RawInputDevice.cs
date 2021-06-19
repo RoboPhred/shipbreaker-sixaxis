@@ -7,7 +7,7 @@ using RoboPhredDev.Shipbreaker.SixAxis.Native.RID;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 {
-    abstract class RawInputDevice
+    abstract class RawInputDevice : IDeviceIdentifier
     {
         public IntPtr Handle { get; }
         public string DeviceName { get; }

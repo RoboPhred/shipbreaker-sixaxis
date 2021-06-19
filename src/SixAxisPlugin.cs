@@ -39,7 +39,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             var mappings = LoadInputMappings();
             RegisterDevices(mappings, windowHandle);
-            InputHandler.Initialize(mappings);
+
+            RawInputReceiver.Initialize();
+
             WindowMessageInterceptor.Enable(windowHandle);
         }
 
@@ -48,47 +50,70 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             LynxControls.Instance.GameplayActions.LastInputType = InControl.BindingSourceType.MouseBindingSource;
         }
 
-        private List<InputMapping> LoadInputMappings()
+        private List<DeviceConfig> LoadInputMappings()
         {
             var configPath = Path.Combine(AssemblyDirectory, "device-configs");
             Logging.Log(new Dictionary<string, string> {
                 {"ConfigFolder", configPath}
-            }, "Loading input configuration");
-            var configs = InputMapping.LoadAllMappings(configPath);
+            }, $"Loading input configuration from {configPath}.");
+            var configs = DeviceConfig.LoadAllMappings(configPath);
             Logging.Log($"Loaded {configs.Count} input configurations.");
             return configs;
         }
 
-        private void RegisterDevices(List<InputMapping> mappings, IntPtr windowHandle)
+        private void RegisterDevices(List<DeviceConfig> mappings, IntPtr windowHandle)
         {
-            var devices = RawInputDevice.GetDevices();
-            var registrations = new List<DeviceRegistration>();
-            foreach (var device in devices.OfType<RawInputHidDevice>())
+            var devices = RawInputDevice.GetDevices().OfType<RawInputHidDevice>().ToArray();
+            var registrationTargets = new HashSet<PageAndUsage>();
+
+            foreach (var device in devices)
             {
-                var mapping = mappings.Find(x => x.ContainsDevice(device.VendorId, device.ProductId));
-                if (mapping == null)
-                {
-                    continue;
-                }
-
-                Logging.Log(new Dictionary<string, string>
-                {
-                    {"VendorId", device.VendorId.ToString("X")},
-                    {"ProductId", device.ProductId.ToString("X")},
-                    {"DeviceName", device.DeviceName},
-                    {"ConfigFile", mapping.FileName},
-                }, $"Found input mapping for device {device.VendorId:X}:{device.ProductId:X}");
-
-                registrations.Add(new DeviceRegistration
-                {
-                    dwFlags = DeviceFlags.None,
-                    hwndTarget = windowHandle,
-                    usUsage = device.Usage,
-                    usUsagePage = device.UsagePage,
-                });
+                registrationTargets.Add(new PageAndUsage(device.UsagePage, device.Usage));
             }
 
-            RawInputInterop.RegisterDevices(registrations.ToArray());
+            RawInputInterop.RegisterDevices(registrationTargets.Select(usageAndPage => new DeviceRegistration
+            {
+                dwFlags = DeviceFlags.None,
+                hwndTarget = windowHandle,
+                usUsagePage = usageAndPage.UsagePage,
+                usUsage = usageAndPage.Usage
+            }).ToArray());
+            Logging.Log($"Registered input to listen for {registrationTargets.Count} page and usage pairs.");
+
+            var foundMapping = false;
+
+            // Mappings have been designed to be device agnostic, so we can give the user a list of valid mappings per device and let them choose.
+            // This is why each device spec has to be configured with each mapping in InputManager.
+            // For now though, we blindly apply every mapping to every spec it supports.
+
+            foreach (var mapping in mappings)
+            {
+                foreach (var spec in mapping.Devices)
+                {
+                    InputManager.RegisterInputMap(spec, mapping);
+                }
+
+                var matchingDevices = devices.Where(device => mapping.Devices.Any(spec => spec.SpecificationMatches(device)));
+
+                foreach (var device in matchingDevices)
+                {
+                    foundMapping = true;
+                    Logging.Log(new Dictionary<string, string>
+                    {
+                        {"VendorId", device.VendorId.ToString("X")},
+                        {"ProductId", device.ProductId.ToString("X")},
+                        {"DeviceName", device.DeviceName},
+                        {"ConfigFile", mapping.FileName},
+                    }, $"Found input mapping for device {device.VendorId:X}:{device.ProductId:X}");
+                }
+            }
+
+            Logging.Log($"Registered {mappings.Count} input mappings");
+
+            if (!foundMapping)
+            {
+                Logging.Log("WARNING: No devices matched any of the mappings available during startup.  Check that your mappings are correct and that your device is plugged in.");
+            }
         }
 
         private void ApplyPatches()

@@ -2,10 +2,14 @@ using YamlDotNet.Serialization;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 {
-    class DeviceIdentifier
+    class ConfiguredDeviceSpecification : IDeviceSpecification
     {
+
+        [YamlMember(Alias = "deviceName")]
+        public string DeviceName { get; set; }
+
         [YamlMember(Alias = "vendorId")]
-        public int? VendorIds { get; set; }
+        public int? VendorId { get; set; }
 
         [YamlMember(Alias = "productId")]
         public int? ProductId { get; set; }
