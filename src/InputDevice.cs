@@ -33,6 +33,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             return null;
         }
 
+        public PageAndUsage[] GetButtonsPressed()
+        {
+            return activeButtons.ToArray();
+        }
+
         public bool GetButtonPressed(PageAndUsage buttonIdentifier)
         {
             return activeButtons.Contains(buttonIdentifier);
@@ -52,11 +57,17 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             {
                 if (pair.Value)
                 {
-                    activeButtons.Add(pair.Key);
+                    if (activeButtons.Add(pair.Key))
+                    {
+                        Logging.Log($"Button {pair.Key} pressed.");
+                    }
                 }
                 else
                 {
-                    activeButtons.Remove(pair.Key);
+                    if (activeButtons.Remove(pair.Key))
+                    {
+                        Logging.Log($"Button {pair.Key} released.");
+                    }
                 }
             }
         }

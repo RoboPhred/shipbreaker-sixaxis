@@ -8,7 +8,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 {
     class DeviceConfig : IInputMap
     {
-        [YamlIgnore()]
+        [YamlIgnore]
         public string FileName { get; set; }
 
         [YamlMember(Alias = "devices")]
@@ -17,7 +17,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         [YamlMember(Alias = "axes")]
         public List<ConfiguredAxisMapping> Axes { get; set; } = new List<ConfiguredAxisMapping>();
 
+        // TODO: Load from yaml
+        public List<IButtonMapping> Buttons { get; set; } = new List<IButtonMapping>();
+
         IReadOnlyCollection<IAxisMapping> IInputMap.Axes => this.Axes;
+        IReadOnlyCollection<IButtonMapping> IInputMap.Buttons => this.Buttons;
 
         public static DeviceConfig Load(string filePath)
         {

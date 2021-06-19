@@ -54,18 +54,45 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             if (!devices.TryGetValue(deviceName, out var controller))
             {
                 controller = new InputDevice(data.Device.DeviceName, data.Device.VendorId, data.Device.ProductId, data.Device.UsagePage);
-                var mapping = inputMaps.FirstOrDefault(x => x.Key.SpecificationMatches(data.Device));
+                var newMapping = inputMaps.FirstOrDefault(x => x.Key.SpecificationMatches(data.Device));
                 devices.Add(deviceName, controller);
                 Logging.Log(new Dictionary<string, string>
                     {
                         {"VendorId", data.Device.VendorId.ToString("X")},
                         {"ProductId", data.Device.ProductId.ToString("X")},
                         {"DeviceName", deviceName},
-                        {"ConfigFile", (mapping.Key != null) ? mapping.Value.FileName : null},
-                    }, $"New device discovered.   Device {data.Device.DeviceName} " + ((mapping.Key != null) ? $"has input mapping {mapping.Value.FileName}" : "has no input mapping."));
+                        {"ConfigFile", (newMapping.Key != null) ? newMapping.Value.FileName : null},
+                    }, $"New device discovered.   Device {data.Device.DeviceName} " + ((newMapping.Key != null) ? $"has input mapping {newMapping.Value.FileName}" : "has no input mapping."));
             }
 
+            var preUpdateButtons = new HashSet<PageAndUsage>(controller.GetButtonsPressed());
+
             controller.HandleInput(data);
+
+            foreach (var mapping in inputMaps.Where(x => x.Key.SpecificationMatches(data.Device)))
+            {
+                var newButtons = new HashSet<PageAndUsage>(controller.GetButtonsPressed());
+
+                var pressed = new HashSet<PageAndUsage>(newButtons);
+                pressed.ExceptWith(preUpdateButtons);
+                foreach (var p in pressed)
+                {
+                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == p.Usage))
+                    {
+                        m.Command.Press();
+                    }
+                }
+
+                var released = new HashSet<PageAndUsage>(preUpdateButtons);
+                released.ExceptWith(newButtons);
+                foreach (var r in released)
+                {
+                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == r.Usage))
+                    {
+                        m.Command.Release();
+                    }
+                }
+            }
         }
 
         private static IEnumerable<float> CollectAxisValues(ShipbreakerAxisType axisType)

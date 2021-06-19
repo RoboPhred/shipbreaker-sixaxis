@@ -9,6 +9,7 @@ using RoboPhredDev.Shipbreaker.SixAxis.Config;
 using RoboPhredDev.Shipbreaker.SixAxis.RawInput;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.Window;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.RID;
+using RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
@@ -88,6 +89,18 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             foreach (var mapping in mappings)
             {
+                // Testing
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 13,
+                    Command = new SelectGrappleCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 14,
+                    Command = new SelectCutterCommand()
+                });
+
                 foreach (var spec in mapping.Devices)
                 {
                     InputManager.RegisterInputMap(spec, mapping);

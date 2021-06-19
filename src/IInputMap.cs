@@ -7,5 +7,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
     {
         string FileName { get; }
         IReadOnlyCollection<IAxisMapping> Axes { get; }
+        IReadOnlyCollection<IButtonMapping> Buttons { get; }
     }
 }
