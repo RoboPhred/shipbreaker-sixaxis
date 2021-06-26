@@ -32,9 +32,6 @@ devices:
   - # SpaceMouse Wireless (cabled)
     vendorId: 0x256F
     productId: 0xC62E
-  - # SpaceMouse Pro
-    vendorId: 0x046D
-    productId: 0xC62B
   - # SpacePilot Pro
     vendorId: 0x046D
     productId: 0xC629

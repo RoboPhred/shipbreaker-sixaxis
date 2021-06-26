@@ -8,7 +8,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         [YamlMember(Alias = "buttonUsage")]
         public ushort ButtonUsage { get; set; }
 
-        // TODO: Parse from yaml
+        [YamlMember(Alias = "command")]
         public IButtonCommand Command { get; set; }
 
         public ushort Usage => this.ButtonUsage;

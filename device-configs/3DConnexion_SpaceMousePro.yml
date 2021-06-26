@@ -1,0 +1,62 @@
+devices:
+  - # SpaceMouse Pro
+    vendorId: 0x046D
+    productId: 0xC62B
+
+axes:
+  - axisUsage: 0x30 # GenericDesktop => X
+    gameAxis: X
+  - axisUsage: 0x31 # GenericDesktop => Y
+    gameAxis: Z
+    invert: true
+  - axisUsage: 0x32 # GenericDesktop => Z
+    gameAxis: Y
+    invert: true
+  - axisUsage: 0x33 # GenericDesktop => Rx
+    gameAxis: Ry
+  - axisUsage: 0x34 # GenericDesktop => Ry
+    gameAxis: Rz
+    invert: true
+  - axisUsage: 0x35 # GenericDesktop => Rz
+    gameAxis: Rx
+
+buttons:
+  # Movement
+  - buttonusage: 24
+    command: ThrustBrake
+  # Tethers
+  - buttonUsage: 5
+    command: PlaceTether
+  - buttonUsage: 2
+    command: RecallTethers
+  # Grapple
+  - buttonUsage: 13
+    command: SelectGrapple
+  - buttonUsage: 3
+    command: GrappleFire
+  - buttonUsage: 9
+    command: Retraction
+  - buttonUsage: 27
+    command: Throw
+  # Cutter
+  - buttonUsage: 14
+    command: SelectCutter
+  - buttonUsage: 3
+    command: CutterFire
+  - buttonUsage: 9
+    command: CutterAltFire
+  # Demo Charges
+  - buttonUsage: 15
+    command: SelectDemoCharge
+  - buttonUsage: 3
+    command: DemoChargeFire
+  - buttonUsage: 9
+    command: DemoChargeAltFire
+  # Scanner
+  - buttonUsage: 16
+    command:
+      commandType: ActivateScanner
+      cycleIfActive: true
+  # Interaction
+  - buttonUsage: 23
+    command: Interact

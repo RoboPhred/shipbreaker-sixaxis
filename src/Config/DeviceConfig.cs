@@ -17,9 +17,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         [YamlDotNet.Serialization.YamlMember(Alias = "axes")]
         public List<ConfiguredAxisMapping> Axes { get; set; } = new();
 
-        // TODO: Load from yaml
-        [YamlDotNet.Serialization.YamlIgnore]
-        public List<IButtonMapping> Buttons { get; set; } = new();
+        [YamlDotNet.Serialization.YamlMember(Alias = "buttons")]
+        public List<ConfiguredButtonMapping> Buttons { get; set; } = new();
 
         IReadOnlyCollection<IAxisMapping> IInputMap.Axes => this.Axes;
         IReadOnlyCollection<IButtonMapping> IInputMap.Buttons => this.Buttons;

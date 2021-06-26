@@ -1,6 +1,7 @@
 
 using System;
 using System.IO;
+using RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -11,12 +12,23 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Yaml
     {
         public static T Deserialize<T>(string filePath)
         {
-            var deserializer = BuildDeserializer();
             return WithFileParser(filePath, parser =>
             {
                 var deserializer = BuildDeserializer();
                 return deserializer.Deserialize<T>(parser);
             });
+        }
+
+        public static T Deserialize<T>(IParser parser)
+        {
+            var deserializer = BuildDeserializer();
+            return deserializer.Deserialize<T>(parser);
+        }
+
+        public static object Deserialize(IParser parser, Type type)
+        {
+            var deserializer = BuildDeserializer();
+            return deserializer.Deserialize(parser, type);
         }
 
         public static T WithFileParser<T>(string filePath, Func<IParser, T> func)
@@ -39,6 +51,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Yaml
         {
             return new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .WithTypeConverter(new ButtonCommandTypeConverter())
+                .IgnoreUnmatchedProperties()
                 .Build();
         }
     }
