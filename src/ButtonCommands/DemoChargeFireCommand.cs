@@ -5,7 +5,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class DemoChargeFireCommand : IButtonCommand
     {
-        private RemotedBindingSource bindingSource = new RemotedBindingSource();
+        private readonly RemotedBindingSource bindingSource = new();
 
         public DemoChargeFireCommand()
         {

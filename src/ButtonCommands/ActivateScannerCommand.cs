@@ -5,8 +5,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class ActivateScannerCommand : IButtonCommand
     {
-        private RemotedBindingSource activateBindingSource = new RemotedBindingSource();
-        private RemotedBindingSource cycleNextBindingSource = new RemotedBindingSource();
+        private readonly RemotedBindingSource activateBindingSource = new();
+        private readonly RemotedBindingSource cycleNextBindingSource = new();
 
         private bool didCycleNext = false;
 

@@ -5,7 +5,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class RecallTethersCommand : IButtonCommand
     {
-        private RemotedBindingSource bindingSource = new RemotedBindingSource();
+        private readonly RemotedBindingSource bindingSource = new();
 
         public RecallTethersCommand()
         {
