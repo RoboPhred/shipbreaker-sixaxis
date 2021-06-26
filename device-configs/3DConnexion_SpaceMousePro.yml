@@ -22,7 +22,7 @@ axes:
 
 buttons:
   # Movement
-  - buttonusage: 24
+  - buttonUsage: 24
     command: ThrustBrake
   # Tethers
   - buttonUsage: 5

@@ -1,9 +1,11 @@
 using RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands;
+using RoboPhredDev.Shipbreaker.SixAxis.Yaml;
+using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 {
-    class ConfiguredButtonMapping : IButtonMapping
+    class ConfiguredButtonMapping : IButtonMapping, IAfterYamlDeserialization
     {
         [YamlMember(Alias = "buttonUsage")]
         public ushort ButtonUsage { get; set; }
@@ -12,5 +14,18 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         public IButtonCommand Command { get; set; }
 
         public ushort Usage => this.ButtonUsage;
+
+        public void AfterDeserialized(Mark start, Mark end)
+        {
+            if (ButtonUsage == 0)
+            {
+                throw new YamlException(start, end, "Button mapping must specify a buttonUsage");
+            }
+
+            if (Command == null)
+            {
+                throw new YamlException(start, end, "Button mapping must specify a command");
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ using RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization.NodeDeserializers;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Yaml
 {
@@ -52,6 +53,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Yaml
             return new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .WithTypeConverter(new ButtonCommandTypeConverter())
+                .WithNodeDeserializer(objectDeserializer => new NodeDeserializer(objectDeserializer), s => s.InsteadOf<ObjectNodeDeserializer>())
                 .IgnoreUnmatchedProperties()
                 .Build();
         }
