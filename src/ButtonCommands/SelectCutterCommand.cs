@@ -1,28 +1,14 @@
 
 using BBI.Unity.Game;
+using InControl;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
-    class SelectCutterCommand : IButtonCommand
+    class SelectCutterCommand : PlayerActionCommand
     {
-        private readonly RemotedBindingSource bindingSource = new();
-
-        public SelectCutterCommand()
+        protected override PlayerAction GetPlayerAction()
         {
-            ControlsReadyMonitor.RunWhenControlsReady(() =>
-            {
-                LynxControls.Instance.GameplayActions.SelectCutter.AddBinding(bindingSource);
-            });
-        }
-
-        public void Press()
-        {
-            bindingSource.State = true;
-        }
-
-        public void Release()
-        {
-            bindingSource.State = false;
+            return LynxControls.Instance.GameplayActions.SelectCutter;
         }
     }
 }

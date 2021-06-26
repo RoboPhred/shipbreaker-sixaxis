@@ -89,7 +89,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             foreach (var mapping in mappings)
             {
-                // Testing
+                // Temporary bindings until button support in yaml is finished.
 
                 // Tethers
                 mapping.Buttons.Add(new ConfiguredButtonMapping()

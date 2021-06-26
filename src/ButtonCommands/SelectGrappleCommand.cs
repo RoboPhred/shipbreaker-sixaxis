@@ -1,28 +1,14 @@
 
 using BBI.Unity.Game;
+using InControl;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
-    class SelectGrappleCommand : IButtonCommand
+    class SelectGrappleCommand : PlayerActionCommand
     {
-        private readonly RemotedBindingSource bindingSource = new();
-
-        public SelectGrappleCommand()
+        protected override PlayerAction GetPlayerAction()
         {
-            ControlsReadyMonitor.RunWhenControlsReady(() =>
-            {
-                LynxControls.Instance.GameplayActions.SelectGrapple.AddBinding(bindingSource);
-            });
-        }
-
-        public void Press()
-        {
-            bindingSource.State = true;
-        }
-
-        public void Release()
-        {
-            bindingSource.State = false;
+            return LynxControls.Instance.GameplayActions.SelectGrapple;
         }
     }
 }

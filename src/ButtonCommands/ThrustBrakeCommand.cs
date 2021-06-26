@@ -5,28 +5,30 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class ThrustBrakeCommand : IButtonCommand
     {
-        private RemotedBindingSource bindingSource1 = new RemotedBindingSource();
-        private RemotedBindingSource bindingSource2 = new RemotedBindingSource();
+        private readonly RemotedBindingSource brakeLeft = new();
+        private readonly RemotedBindingSource brakeRight = new();
 
         public ThrustBrakeCommand()
         {
             ControlsReadyMonitor.RunWhenControlsReady(() =>
             {
-                LynxControls.Instance.GameplayActions.ThrustBrakeLeft.AddBinding(bindingSource1);
-                LynxControls.Instance.GameplayActions.ThrustBrakeRight.AddBinding(bindingSource2);
+                // Controller needs to send both of these to brake.
+                // Since we tell the game that our input is from a controller, we need to send both.
+                LynxControls.Instance.GameplayActions.ThrustBrakeLeft.AddBinding(brakeLeft);
+                LynxControls.Instance.GameplayActions.ThrustBrakeRight.AddBinding(brakeRight);
             });
         }
 
         public void Press()
         {
-            bindingSource1.State = true;
-            bindingSource2.State = true;
+            brakeLeft.State = true;
+            brakeRight.State = true;
         }
 
         public void Release()
         {
-            bindingSource1.State = false;
-            bindingSource2.State = false;
+            brakeLeft.State = false;
+            brakeRight.State = false;
         }
     }
 }

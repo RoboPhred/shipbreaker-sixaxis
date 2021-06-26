@@ -1,28 +1,14 @@
 
 using BBI.Unity.Game;
+using InControl;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
-    class DemoChargeAltFireCommand : IButtonCommand
+    class DemoChargeAltFireCommand : PlayerActionCommand
     {
-        private readonly RemotedBindingSource bindingSource = new();
-
-        public DemoChargeAltFireCommand()
+        protected override PlayerAction GetPlayerAction()
         {
-            ControlsReadyMonitor.RunWhenControlsReady(() =>
-            {
-                LynxControls.Instance.GameplayActions.DemoChargeAltFire.AddBinding(bindingSource);
-            });
-        }
-
-        public void Press()
-        {
-            bindingSource.State = true;
-        }
-
-        public void Release()
-        {
-            bindingSource.State = false;
+            return LynxControls.Instance.GameplayActions.DemoChargeAltFire;
         }
     }
 }

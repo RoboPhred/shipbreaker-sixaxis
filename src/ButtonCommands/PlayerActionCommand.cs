@@ -1,19 +1,19 @@
 
-using BBI.Unity.Game;
+using InControl;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
-    class ToolMenuCommand : IButtonCommand
+    abstract class PlayerActionCommand : IButtonCommand
     {
+
         private readonly RemotedBindingSource bindingSource = new();
 
-        public ToolMenuCommand()
+        protected PlayerActionCommand()
         {
-            ControlsReadyMonitor.RunWhenControlsReady(() =>
-            {
-                LynxControls.Instance.GameplayActions.ToolMenu.AddBinding(bindingSource);
-            });
+            ControlsReadyMonitor.RunWhenControlsReady(() => GetPlayerAction().AddBinding(bindingSource));
         }
+
+        protected abstract PlayerAction GetPlayerAction();
 
         public void Press()
         {
