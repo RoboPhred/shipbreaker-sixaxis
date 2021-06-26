@@ -3,15 +3,18 @@ using BBI.Unity.Game;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
-    class SelectGrappleCommand : IButtonCommand
+    class ThrustBrakeCommand : IButtonCommand
     {
         private RemotedBindingSource bindingSource = new RemotedBindingSource();
 
-        public SelectGrappleCommand()
+        public ThrustBrakeCommand()
         {
             ControlsReadyMonitor.RunWhenControlsReady(() =>
             {
-                LynxControls.Instance.GameplayActions.SelectGrapple.AddBinding(bindingSource);
+                // FIXME: Neither of these are working
+
+                LynxControls.Instance.GameplayActions.ThrustBrakeLeft.AddBinding(bindingSource);
+                LynxControls.Instance.GameplayActions.ThrustBrakeRight.AddBinding(bindingSource);
             });
         }
 

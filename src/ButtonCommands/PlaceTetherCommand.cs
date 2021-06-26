@@ -3,15 +3,15 @@ using BBI.Unity.Game;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
-    class SelectGrappleCommand : IButtonCommand
+    class PlaceTetherCommand : IButtonCommand
     {
         private RemotedBindingSource bindingSource = new RemotedBindingSource();
 
-        public SelectGrappleCommand()
+        public PlaceTetherCommand()
         {
             ControlsReadyMonitor.RunWhenControlsReady(() =>
             {
-                LynxControls.Instance.GameplayActions.SelectGrapple.AddBinding(bindingSource);
+                LynxControls.Instance.GameplayActions.PlaceTether.AddBinding(bindingSource);
             });
         }
 

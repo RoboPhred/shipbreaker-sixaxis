@@ -90,6 +90,20 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             foreach (var mapping in mappings)
             {
                 // Testing
+
+                // Tethers
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 5,
+                    Command = new PlaceTetherCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 2,
+                    Command = new RecallTethersCommand()
+                });
+
+                // Grapple
                 mapping.Buttons.Add(new ConfiguredButtonMapping()
                 {
                     ButtonUsage = 13,
@@ -97,8 +111,72 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 });
                 mapping.Buttons.Add(new ConfiguredButtonMapping()
                 {
+                    ButtonUsage = 3,
+                    Command = new GrappleFireCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 9,
+                    Command = new RetractionCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 27,
+                    Command = new ThrowCommand()
+                });
+
+                // Cutter
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
                     ButtonUsage = 14,
                     Command = new SelectCutterCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 3,
+                    Command = new CutterFireCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 9,
+                    Command = new CutterAltFireCommand()
+                });
+
+                // Demo
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 15,
+                    Command = new SelectDemoChargeCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 3,
+                    Command = new DemoChargeFireCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 9,
+                    Command = new DemoChargeAltFireCommand()
+                });
+
+                // General
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 16,
+                    Command = new ActivateScannerCommand()
+                    {
+                        CycleIfActive = true
+                    }
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 23,
+                    Command = new InteractCommand()
+                });
+                mapping.Buttons.Add(new ConfiguredButtonMapping()
+                {
+                    ButtonUsage = 24,
+                    Command = new ThrustBrakeCommand()
                 });
 
                 foreach (var spec in mapping.Devices)

@@ -2,34 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using YamlDotNet.Serialization;
+using RoboPhredDev.Shipbreaker.SixAxis.Yaml;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 {
     class DeviceConfig : IInputMap
     {
-        [YamlIgnore]
+        [YamlDotNet.Serialization.YamlIgnore]
         public string FileName { get; set; }
 
-        [YamlMember(Alias = "devices")]
-        public List<ConfiguredDeviceSpecification> Devices { get; set; } = new List<ConfiguredDeviceSpecification>();
+        [YamlDotNet.Serialization.YamlMember(Alias = "devices")]
+        public List<ConfiguredDeviceSpecification> Devices { get; set; } = new();
 
-        [YamlMember(Alias = "axes")]
-        public List<ConfiguredAxisMapping> Axes { get; set; } = new List<ConfiguredAxisMapping>();
+        [YamlDotNet.Serialization.YamlMember(Alias = "axes")]
+        public List<ConfiguredAxisMapping> Axes { get; set; } = new();
 
         // TODO: Load from yaml
-        public List<IButtonMapping> Buttons { get; set; } = new List<IButtonMapping>();
+        [YamlDotNet.Serialization.YamlIgnore]
+        public List<IButtonMapping> Buttons { get; set; } = new();
 
         IReadOnlyCollection<IAxisMapping> IInputMap.Axes => this.Axes;
         IReadOnlyCollection<IButtonMapping> IInputMap.Buttons => this.Buttons;
 
         public static DeviceConfig Load(string filePath)
         {
-            var text = File.ReadAllText(filePath);
-            var deserializer = new Deserializer();
-            var mapping = deserializer.Deserialize<DeviceConfig>(text);
-            mapping.FileName = Path.GetFileName(filePath);
-            return mapping;
+            return Deserializer.Deserialize<DeviceConfig>(filePath);
         }
 
         public static List<DeviceConfig> LoadAllMappings(string directoryPath)

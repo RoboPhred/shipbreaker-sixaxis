@@ -5,24 +5,24 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class SelectCutterCommand : IButtonCommand
     {
-        private RemotedBindingSource cutterCommand = new RemotedBindingSource();
+        private RemotedBindingSource bindingSource = new RemotedBindingSource();
 
         public SelectCutterCommand()
         {
             ControlsReadyMonitor.RunWhenControlsReady(() =>
             {
-                LynxControls.Instance.GameplayActions.SelectCutter.AddBinding(cutterCommand);
+                LynxControls.Instance.GameplayActions.SelectCutter.AddBinding(bindingSource);
             });
         }
 
         public void Press()
         {
-            cutterCommand.State = true;
+            bindingSource.State = true;
         }
 
         public void Release()
         {
-            cutterCommand.State = false;
+            bindingSource.State = false;
         }
     }
 }

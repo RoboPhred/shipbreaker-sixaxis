@@ -43,13 +43,15 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             return activeButtons.Contains(buttonIdentifier);
         }
 
-        public void HandleInput(RawInputHidData data)
+        public InputDeviceFrame HandleInput(RawInputHidData data)
         {
             foreach (var pair in data.GetAllValues())
             {
-                var normalized = pair.Value.NormalizedValue;
-                normalizedAxes[pair.Key] = normalized;
+                normalizedAxes[pair.Key] = pair.Value.NormalizedValue;
             }
+
+            var buttonsPressed = new HashSet<PageAndUsage>();
+            var buttonsReleased = new HashSet<PageAndUsage>();
 
             // We only get a button entry if we received a report containing that button.
             // Buttons not in the reports are presumed to mantain their previously seen value.
@@ -59,17 +61,19 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 {
                     if (activeButtons.Add(pair.Key))
                     {
-                        Logging.Log($"Button {pair.Key} pressed.");
+                        buttonsPressed.Add(pair.Key);
                     }
                 }
                 else
                 {
                     if (activeButtons.Remove(pair.Key))
                     {
-                        Logging.Log($"Button {pair.Key} released.");
+                        buttonsReleased.Add(pair.Key);
                     }
                 }
             }
+
+            return new InputDeviceFrame(buttonsPressed, buttonsReleased);
         }
     }
 }

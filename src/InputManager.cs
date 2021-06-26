@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RoboPhredDev.Shipbreaker.SixAxis.RawInput;
@@ -49,45 +50,55 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         public static void HandleInput(RawInputHidData data)
         {
-            var deviceName = data.Device.DeviceName;
+            try
+            {
+                var controller = GetInputDevice(data.Device);
+
+                var frame = controller.HandleInput(data);
+                ProcessButtons(controller, frame);
+            }
+            catch (Exception ex)
+            {
+                Logging.Log($"Error handling input: {ex.Message}\n\n{ex.StackTrace}");
+            }
+        }
+
+        private static InputDevice GetInputDevice(RawInputDevice device)
+        {
+            var deviceName = device.DeviceName;
 
             if (!devices.TryGetValue(deviceName, out var controller))
             {
-                controller = new InputDevice(data.Device.DeviceName, data.Device.VendorId, data.Device.ProductId, data.Device.UsagePage);
-                var newMapping = inputMaps.FirstOrDefault(x => x.Key.SpecificationMatches(data.Device));
+                controller = new InputDevice(deviceName, device.VendorId, device.ProductId, device.UsagePage);
+                var newMapping = inputMaps.FirstOrDefault(x => x.Key.SpecificationMatches(device));
                 devices.Add(deviceName, controller);
                 Logging.Log(new Dictionary<string, string>
                     {
-                        {"VendorId", data.Device.VendorId.ToString("X")},
-                        {"ProductId", data.Device.ProductId.ToString("X")},
+                        {"VendorId", device.VendorId.ToString("X")},
+                        {"ProductId", device.ProductId.ToString("X")},
                         {"DeviceName", deviceName},
                         {"ConfigFile", (newMapping.Key != null) ? newMapping.Value.FileName : null},
-                    }, $"New device discovered.   Device {data.Device.DeviceName} " + ((newMapping.Key != null) ? $"has input mapping {newMapping.Value.FileName}" : "has no input mapping."));
+                    }, $"New device discovered.   Device {device.DeviceName} " + ((newMapping.Key != null) ? $"has input mapping {newMapping.Value.FileName}" : "has no input mapping."));
             }
 
-            var preUpdateButtons = new HashSet<PageAndUsage>(controller.GetButtonsPressed());
+            return controller;
+        }
 
-            controller.HandleInput(data);
-
-            foreach (var mapping in inputMaps.Where(x => x.Key.SpecificationMatches(data.Device)))
+        private static void ProcessButtons(InputDevice device, InputDeviceFrame frame)
+        {
+            foreach (var mapping in inputMaps.Where(x => x.Key.SpecificationMatches(device)))
             {
-                var newButtons = new HashSet<PageAndUsage>(controller.GetButtonsPressed());
-
-                var pressed = new HashSet<PageAndUsage>(newButtons);
-                pressed.ExceptWith(preUpdateButtons);
-                foreach (var p in pressed)
+                foreach (var pressed in frame.ButtonsPressed)
                 {
-                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == p.Usage))
+                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == pressed.Usage))
                     {
                         m.Command.Press();
                     }
                 }
 
-                var released = new HashSet<PageAndUsage>(preUpdateButtons);
-                released.ExceptWith(newButtons);
-                foreach (var r in released)
+                foreach (var released in frame.ButtonsReleased)
                 {
-                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == r.Usage))
+                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == released.Usage))
                     {
                         m.Command.Release();
                     }
