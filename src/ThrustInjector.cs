@@ -16,19 +16,21 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         {
             var instructionList = instructions.ToList();
 
-            var insertPoint = instructionList.FindIndex((x) =>
+            // Find the last call to GetOneAxisInputControlValue to inject at
+            // FIXME: We should instead look for the LDLOCA.S for rawValue, but for some reason every single LocalIndex from that returns 19 even for different locals
+            var insertPoint = instructionList.FindLastIndex((x) =>
             {
-                if (x.opcode != OpCodes.Ldfld)
-                {
-                    return false;
-                }
-                var info = x.operand as FieldInfo;
-                if (info == null)
+                if (x.opcode != OpCodes.Call)
                 {
                     return false;
                 }
 
-                return info.Name == "ThrustDepth";
+                if (!(x.operand is MethodInfo info))
+                {
+                    return false;
+                }
+
+                return info.Name == "GetOneAxisInputControlValue";
             });
 
             if (insertPoint == -1)
@@ -37,9 +39,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 return instructions;
             }
 
-            // Jump over additional instructions
-            insertPoint += 3;
+            // Skip over the final storage calls, so we can inject with the previous value.
+            insertPoint += 2;
 
+            // Insert right at the rawVector assignment, pushing it out after our translation application.
             instructionList.Insert(insertPoint++, new CodeInstruction(OpCodes.Ldloc_1));
             instructionList.Insert(insertPoint++, new CodeInstruction(OpCodes.Call, typeof(ThrustInjector).GetMethod("ApplySixAxisTranslation", BindingFlags.Static | BindingFlags.NonPublic)));
             instructionList.Insert(insertPoint++, new CodeInstruction(OpCodes.Stloc_1));
