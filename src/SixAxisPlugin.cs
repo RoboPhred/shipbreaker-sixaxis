@@ -73,9 +73,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
             foreach (var device in devices)
             {
-                Logging.Log($"Found device: {device.DeviceName} ({device.Usage}, {device.UsagePage})");
-
-                Logging.Log($"Registering device to window {windowHandle}");
+                Logging.Log($"Registering device: {device.DeviceName} ({device.Usage}, {device.UsagePage})");
                 try
                 {
                     RawInputInterop.RegisterDevices(new[] {

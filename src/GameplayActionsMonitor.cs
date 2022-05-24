@@ -13,30 +13,31 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         public static GameplayActions CurrentGameplayActions
         {
-            get {
+            get
+            {
                 return actionSet;
             }
         }
 
         public static void RunWhenGameplayActionsCreated(Action<GameplayActions> action)
         {
-            // if (actionSet != null)
-            // {
-            //     action(actionSet);
-            // }
+            if (actionSet != null)
+            {
+                action(actionSet);
+            }
 
-            // pendingActions.Add(action);
+            pendingActions.Add(action);
         }
 
-        static void Postfix(GameplayActions __instance)
+        static void Postfix(GameplayActions __result)
         {
-            // actionSet = __instance;
-            // foreach (var action in pendingActions)
-            // {
-            //     action(actionSet);
-            // }
+            Logging.Log("GameplayActionsMonitor: Captured GameplayActions instance");
+            actionSet = __result;
+            foreach (var action in pendingActions)
+            {
+                action(actionSet);
+            }
         }
     }
 }
-
 
