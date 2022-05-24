@@ -53,7 +53,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         {
             // If gameplay actions are disabled, do not send data.
             // The game will corrupt if it gets any thrust vector input while paused.
-            if (LynxControls.Instance.GameplayActions.Enabled == false)
+            if (ActionBlockerService.Instance.IsBlockingAnyAndAllActions())
             {
                 return vector;
             }

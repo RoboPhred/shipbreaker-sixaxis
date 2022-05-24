@@ -14,10 +14,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 
         public ActivateScannerCommand()
         {
-            ControlsReadyMonitor.RunWhenControlsReady(() =>
+            GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) =>
             {
-                LynxControls.Instance.GameplayActions.ActivateScanner.AddBinding(activateBindingSource);
-                LynxControls.Instance.GameplayActions.ScanCycleRight.AddBinding(cycleNextBindingSource);
+                actions.ActivateScanner.AddBinding(activateBindingSource);
+                actions.ScanCycleRight.AddBinding(cycleNextBindingSource);
             });
         }
 

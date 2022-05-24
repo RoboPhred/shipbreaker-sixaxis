@@ -63,7 +63,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             // Unlike ThrustController, orientation handles input while paused just fine.
             // However, the base game never registers input during this time, so we should
             // mirror it.
-            if (LynxControls.Instance.GameplayActions.Enabled == false)
+            if (ActionBlockerService.Instance.IsBlockingAnyAndAllActions())
             {
                 return vector;
             }
@@ -74,5 +74,3 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         }
     }
 }
-
-

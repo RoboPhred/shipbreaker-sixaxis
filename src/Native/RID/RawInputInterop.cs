@@ -53,7 +53,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.RID
 
         public static void RegisterDevices(DeviceRegistration[] devices)
         {
-            RegisterRawInputDevices(devices, (uint)devices.Length, (uint)Marshal.SizeOf(typeof(DeviceRegistration)));
+            if (!RegisterRawInputDevices(devices, (uint)devices.Length, (uint)Marshal.SizeOf(typeof(DeviceRegistration))))
+            {
+                throw Win32ErrorException.FromLastWin32Error();
+            }
         }
 
         public static RawInputDataHeader GetRawInputHeader(IntPtr rawInputHandle)

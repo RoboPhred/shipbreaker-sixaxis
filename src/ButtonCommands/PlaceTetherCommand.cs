@@ -6,9 +6,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class PlaceTetherCommand : PlayerActionCommand
     {
-        protected override PlayerAction GetPlayerAction()
+        protected override PlayerAction GetPlayerAction(GameplayActions actions)
         {
-            return LynxControls.Instance.GameplayActions.PlaceTether;
+            return actions.PlaceTether;
         }
     }
 }

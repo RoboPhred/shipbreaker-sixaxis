@@ -6,9 +6,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class InteractCommand : PlayerActionCommand
     {
-        protected override PlayerAction GetPlayerAction()
+        protected override PlayerAction GetPlayerAction(GameplayActions actions)
         {
-            return LynxControls.Instance.GameplayActions.Interact;
+            return actions.Interact;
         }
     }
 }

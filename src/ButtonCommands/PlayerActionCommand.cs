@@ -1,4 +1,5 @@
 
+using BBI.Unity.Game;
 using InControl;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
@@ -10,10 +11,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 
         protected PlayerActionCommand()
         {
-            ControlsReadyMonitor.RunWhenControlsReady(() => GetPlayerAction().AddBinding(bindingSource));
+            GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) => GetPlayerAction(actions).AddBinding(bindingSource));
         }
 
-        protected abstract PlayerAction GetPlayerAction();
+        protected abstract PlayerAction GetPlayerAction(GameplayActions actions);
 
         public void Press()
         {

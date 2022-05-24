@@ -10,12 +10,12 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 
         public ThrustBrakeCommand()
         {
-            ControlsReadyMonitor.RunWhenControlsReady(() =>
+            GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) =>
             {
                 // Controller needs to send both of these to brake.
                 // Since we tell the game that our input is from a controller, we need to send both.
-                LynxControls.Instance.GameplayActions.ThrustBrakeLeft.AddBinding(brakeLeft);
-                LynxControls.Instance.GameplayActions.ThrustBrakeRight.AddBinding(brakeRight);
+                actions.ThrustBrakeLeft.AddBinding(brakeLeft);
+                actions.ThrustBrakeRight.AddBinding(brakeRight);
             });
         }
 

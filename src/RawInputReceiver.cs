@@ -1,5 +1,6 @@
 using System;
 using RoboPhredDev.Shipbreaker.SixAxis.RawInput;
+using UnityEngine;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
@@ -27,6 +28,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                     // Game already registers and uses Mouse, so pass that back.
                     return;
                 }
+
+                Debug.Log("Got WM_INPUT for controller");
 
                 // Mark the message as handled and return 0 for consumed.
                 e.Result = IntPtr.Zero;

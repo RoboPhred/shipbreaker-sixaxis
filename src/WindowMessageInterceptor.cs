@@ -35,6 +35,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                 return;
             }
 
+            Logging.Log("Enabling window message interceptor.");
+
             sWindowHandle = windowHandle;
             sOriginalHandler = WindowInterop.SetWindowProc(windowHandle, CustomWndProc);
         }

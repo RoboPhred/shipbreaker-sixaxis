@@ -9,12 +9,11 @@ using RoboPhredDev.Shipbreaker.SixAxis.Config;
 using RoboPhredDev.Shipbreaker.SixAxis.RawInput;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.Window;
 using RoboPhredDev.Shipbreaker.SixAxis.Native.RID;
-using RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis
 {
 
-    [BepInPlugin("net.robophreddev.shipbreaker.SixAxis", "Six Axis Joystick support for Shipbreaker", "1.1.2.0")]
+    [BepInPlugin("net.robophreddev.shipbreaker.SixAxis", "Six Axis Joystick support for Shipbreaker", "1.1.3.0")]
     public class SixAxisPlugin : BaseUnityPlugin
     {
         public static SixAxisPlugin Instance;
@@ -50,7 +49,11 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         {
             // We probably should be specifying that we are a controller, but for now we want to make use of
             // the mouse acceleration profile for a snappier response.
-            LynxControls.Instance.GameplayActions.LastInputType = InControl.BindingSourceType.MouseBindingSource;
+            var actions = GameplayActionsMonitor.CurrentGameplayActions;
+            if (actions != null)
+            {
+                actions.LastInputType = InControl.BindingSourceType.MouseBindingSource;
+            }
         }
 
         private List<DeviceConfig> LoadInputMappings()
@@ -67,21 +70,28 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         private void RegisterDevices(List<DeviceConfig> mappings, IntPtr windowHandle)
         {
             var devices = RawInputDevice.GetDevices().OfType<RawInputHidDevice>().ToArray();
-            var registrationTargets = new HashSet<PageAndUsage>();
 
             foreach (var device in devices)
             {
-                registrationTargets.Add(new PageAndUsage(device.UsagePage, device.Usage));
-            }
+                Logging.Log($"Found device: {device.DeviceName} ({device.Usage}, {device.UsagePage})");
 
-            RawInputInterop.RegisterDevices(registrationTargets.Select(usageAndPage => new DeviceRegistration
-            {
-                dwFlags = DeviceFlags.None,
-                hwndTarget = windowHandle,
-                usUsagePage = usageAndPage.UsagePage,
-                usUsage = usageAndPage.Usage
-            }).ToArray());
-            Logging.Log($"Registered input to listen for {registrationTargets.Count} page and usage pairs.");
+                Logging.Log($"Registering device to window {windowHandle}");
+                try
+                {
+                    RawInputInterop.RegisterDevices(new[] {
+                    new DeviceRegistration {
+                        usUsagePage = (ushort)device.UsagePage,
+                        usUsage = (ushort)device.Usage,
+                        dwFlags = DeviceFlags.None,
+                        hwndTarget = windowHandle
+                    }
+                });
+                }
+                catch (Exception e)
+                {
+                    Logging.Log($"Failed to register device: {e.Message}");
+                }
+            }
 
             var foundMapping = false;
 
