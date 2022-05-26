@@ -50,7 +50,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
         public static void HandleInput(RawInputHidData data)
         {
-            Debug.Log("Got input from device" + data.Device.DeviceName);
             try
             {
                 var controller = GetInputDevice(data.Device);

@@ -41,8 +41,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
                 // FIXME: There must be a way to read the report id of the reports we have...
                 // Without that, we just have to try every cap against every report.
                 // This is really, really stupid.
-                foreach (var report in reports)
+                for (var i = 0; i < reports.Length; i++)
                 {
+                    var report = reports[i];
+
                     ushort usageMin;
                     ushort usageMax;
                     if (cap.IsRange)
@@ -57,19 +59,38 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
 
                     for (var usage = usageMin; usage <= usageMax; usage++)
                     {
-                        var value = HidInterop.GetScaledUsageValue(HidPReportType.HidP_Input, cap.UsagePage, cap.LinkCollection, usage, preparsedDataPtr, report, (uint)report.Length);
-                        if (value.HasValue)
+                        try
                         {
-                            if (value.Value < cap.PhysicalMin || value.Value > cap.PhysicalMax)
+                            RawInputHidValue hidValue = null;
+
+                            if (cap.IsAbsolute)
                             {
-                                continue;
+                                var value = HidInterop.GetUsageValue(HidPReportType.HidP_Input, cap.UsagePage, cap.LinkCollection, usage, preparsedDataPtr, report, (uint)report.Length);
+                                if (value.HasValue)
+                                {
+                                    hidValue = new RawInputHidValue(cap, usage, value.Value, true);
+                                }
+                            }
+                            else
+                            {
+                                var value = HidInterop.GetScaledUsageValue(HidPReportType.HidP_Input, cap.UsagePage, cap.LinkCollection, usage, preparsedDataPtr, report, (uint)report.Length);
+                                if (value.HasValue)
+                                {
+                                    // We are getting lots of -1s from the legacy spacemouse pro when no input is available.
+                                    // Is this normal?  Should we be filtering this out?
+
+                                    hidValue = new RawInputHidValue(cap, usage, value.Value, false);
+                                }
                             }
 
-                            // We are getting lots of -1s from the legacy spacemouse pro when no input is available.
-                            // Is this normal?  Should we be filtering this out?
-
-                            var valueThing = new RawInputHidValue(usage, cap.UsagePage, value.Value, cap);
-                            inputValues.Add(new PageAndUsage(cap.UsagePage, usage), valueThing);
+                            if (hidValue != null)
+                            {
+                                inputValues.Add(new PageAndUsage(cap.UsagePage, usage), hidValue);
+                            }
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Logging.Log($"While reading from device ${this.Device.DeviceName} report {i} page {cap.UsagePage} collection {cap.LinkCollection} usage {usage}: {ex.Message}");
                         }
                     }
                 }

@@ -6,34 +6,39 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
     class RawInputHidValue
     {
         private HidPValueCaps valueCaps;
+        private readonly int value;
+        private readonly bool isRaw;
 
-        public RawInputHidValue(ushort usage, ushort page, int scaledValue, HidPValueCaps valueCaps)
+        public RawInputHidValue(HidPValueCaps valueCaps, ushort usage, int value, bool isRaw)
         {
             this.valueCaps = valueCaps;
-
             Usage = usage;
-            Page = page;
-            ScaledValue = scaledValue;
+            this.value = value;
+            this.isRaw = isRaw;
+
+            if (usage == 0x30)
+            {
+                Logging.Log($"usage {usage} isAbsolute {valueCaps.IsAbsolute} {this}");
+            }
         }
 
         public ushort Usage { get; }
-        public ushort Page { get; }
-        public int ScaledValue { get; }
+        public ushort Page => valueCaps.UsagePage;
 
         public float NormalizedValue
         {
             get
             {
-                var min = (float)valueCaps.PhysicalMin;
-                var max = (float)valueCaps.PhysicalMax;
+                var min = isRaw ? (float)valueCaps.LogicalMin : (float)valueCaps.PhysicalMin;
+                var max = isRaw ? (float)valueCaps.LogicalMax : (float)valueCaps.PhysicalMax;
 
-                return (2.0f * (ScaledValue - min) / (max - min)) - 1.0f;
+                return (2.0f * (this.value - min) / (max - min)) - 1.0f;
             }
         }
 
         public override string ToString()
         {
-            return $"{ScaledValue} ({NormalizedValue}, {valueCaps.LogicalMin}-{valueCaps.LogicalMax}, {valueCaps.PhysicalMin}-{valueCaps.PhysicalMax})";
+            return $"{value} (raw: {isRaw}) ({NormalizedValue}, {valueCaps.LogicalMin}-{valueCaps.LogicalMax}, {valueCaps.PhysicalMin}-{valueCaps.PhysicalMax})";
         }
     }
 }
