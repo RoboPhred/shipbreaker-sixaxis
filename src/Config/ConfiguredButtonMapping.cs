@@ -19,7 +19,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         {
             if (ButtonUsage == 0)
             {
-                throw new YamlException(start, end, "Button mapping must specify a buttonUsage");
+                throw new YamlException(start, end, "Button mapping must specify a buttonUsage greater than or equal to 1");
             }
 
             if (Command == null)
