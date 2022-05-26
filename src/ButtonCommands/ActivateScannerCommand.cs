@@ -5,8 +5,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 {
     class ActivateScannerCommand : IButtonCommand
     {
-        private readonly RemotedBindingSource activateBindingSource = new();
-        private readonly RemotedBindingSource cycleNextBindingSource = new();
+        private RemotedBindingSource activateBindingSource = new();
+        private RemotedBindingSource cycleNextBindingSource = new();
 
         private bool didCycleNext = false;
 
@@ -16,6 +16,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
         {
             GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) =>
             {
+                this.activateBindingSource = new();
+                this.cycleNextBindingSource = new();
                 actions.ActivateScanner.AddBinding(activateBindingSource);
                 actions.ScanCycleRight.AddBinding(cycleNextBindingSource);
             });

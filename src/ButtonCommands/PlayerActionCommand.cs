@@ -7,11 +7,15 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
     abstract class PlayerActionCommand : IButtonCommand
     {
 
-        private readonly RemotedBindingSource bindingSource = new();
+        private RemotedBindingSource bindingSource = new();
 
         protected PlayerActionCommand()
         {
-            GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) => GetPlayerAction(actions).AddBinding(bindingSource));
+            GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) =>
+            {
+                this.bindingSource = new();
+                GetPlayerAction(actions).AddBinding(bindingSource);
+            });
         }
 
         protected abstract PlayerAction GetPlayerAction(GameplayActions actions);
