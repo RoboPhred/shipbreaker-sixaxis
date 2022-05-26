@@ -15,11 +15,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.RawInput
             Usage = usage;
             this.value = value;
             this.isRaw = isRaw;
-
-            if (usage == 0x30)
-            {
-                Logging.Log($"usage {usage} isAbsolute {valueCaps.IsAbsolute} {this}");
-            }
         }
 
         public ushort Usage { get; }
