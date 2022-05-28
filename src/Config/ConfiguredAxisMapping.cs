@@ -33,7 +33,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
                 return 0.0f;
             }
 
-            return Math.Max(1, Math.Min(-1, normalizedValue * this.Scale * (this.Invert ? -1.0f : 1.0f)));
+            return Math.Min(1, Math.Max(-1, normalizedValue * this.Scale * (this.Invert ? -1.0f : 1.0f)));
         }
     }
 }
