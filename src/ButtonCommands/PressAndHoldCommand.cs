@@ -35,7 +35,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
             // Check if we had a short press.
             if (downTick.HasValue && downTick.Value + (long)(Duration * TimeSpan.TicksPerSecond) > DateTime.Now.Ticks)
             {
-                this.ShortPress.Press();
+                this.ShortPress?.Press();
 
                 // Record that we are short pressing so the button logic can run in Update()
                 this.executeTick = DateTime.Now.Ticks;
@@ -45,7 +45,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
             // Long presses hold the button down until released by the player.
             if (executingPress == ExecutingPress.Long)
             {
-                this.LongPress.Release();
+                this.LongPress?.Release();
                 executeTick = 0;
                 executingPress = ExecutingPress.None;
             }
@@ -57,7 +57,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
         {
             if (downTick.HasValue && downTick.Value + (long)(Duration * TimeSpan.TicksPerSecond) <= DateTime.Now.Ticks)
             {
-                this.LongPress.Press();
+                this.LongPress?.Press();
 
                 this.executeTick = DateTime.Now.Ticks;
                 this.executingPress = ExecutingPress.Long;
@@ -68,7 +68,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
             // For long presses, we will keep holding the binding button down until the real button is released.
             if (executingPress == ExecutingPress.Short && executeTick + (0.5 * TimeSpan.TicksPerSecond) <= DateTime.Now.Ticks)
             {
-                this.ShortPress.Release();
+                this.ShortPress?.Release();
                 executeTick = 0;
                 executingPress = ExecutingPress.None;
             }
