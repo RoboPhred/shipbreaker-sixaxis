@@ -28,6 +28,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             }
         }
 
+        private readonly HashSet<IUpdatable> updatables = new();
+
         void Awake()
         {
             SixAxisPlugin.Instance = this;
@@ -43,6 +45,24 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             RawInputReceiver.Initialize();
 
             WindowMessageInterceptor.Enable(windowHandle);
+        }
+
+        void Update()
+        {
+            foreach (var updatable in this.updatables)
+            {
+                updatable.Update();
+            }
+        }
+
+        public void AddUpdatable(IUpdatable updatable)
+        {
+            this.updatables.Add(updatable);
+        }
+
+        public void RemoveUpdatable(IUpdatable updatable)
+        {
+            this.updatables.Remove(updatable);
         }
 
         public void ReceivedControllerInput()
