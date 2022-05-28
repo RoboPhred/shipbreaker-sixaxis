@@ -19,7 +19,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         public ShipbreakerAxisType GameAxis { get; set; }
 
         [YamlMember(Alias = "scale")]
-        public float Scale { get; set; }
+        public float Scale { get; set; } = 1.0f;
 
         [YamlMember(Alias = "deadZone")]
         public float DeadZone { get; set; }
