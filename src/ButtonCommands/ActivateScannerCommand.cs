@@ -8,14 +8,13 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
         private RemotedBindingSource activateBindingSource = new();
         private RemotedBindingSource cycleNextBindingSource = new();
 
-        private bool didCycleNext = false;
-
         public bool CycleIfActive { get; set; }
 
         public ActivateScannerCommand()
         {
             GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) =>
             {
+                // We need to create a new binding source each time, as the old source will refuse to re-bind.
                 this.activateBindingSource = new();
                 this.cycleNextBindingSource = new();
                 actions.ActivateScanner.AddBinding(activateBindingSource);
@@ -28,7 +27,6 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
             if (CycleIfActive && EquipmentControllerInstance.Instance.CurrentEquipment == EquipmentController.Equipment.Scanner)
             {
                 cycleNextBindingSource.State = true;
-                didCycleNext = true;
             }
             else
             {
@@ -38,15 +36,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 
         public void Release()
         {
-            if (didCycleNext)
-            {
-                didCycleNext = false;
-                cycleNextBindingSource.State = false;
-            }
-            else
-            {
-                activateBindingSource.State = false;
-            }
+            cycleNextBindingSource.State = false;
+            activateBindingSource.State = false;
         }
     }
 }

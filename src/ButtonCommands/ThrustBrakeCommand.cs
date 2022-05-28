@@ -12,8 +12,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
         {
             GameplayActionsMonitor.RunWhenGameplayActionsCreated((actions) =>
             {
+                // We need to create a new binding source each time, as the old source will refuse to re-bind.
                 this.brakeLeft = new();
                 this.brakeRight = new();
+
                 // Controller needs to send both of these to brake.
                 // Since we tell the game that our input is from a controller, we need to send both.
                 actions.ThrustBrakeLeft.AddBinding(brakeLeft);

@@ -1,5 +1,8 @@
 using System;
 using System.Linq;
+using System.Reflection;
+using BBI.Unity.Game;
+using InControl;
 using RoboPhredDev.Shipbreaker.SixAxis.Yaml;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
@@ -11,7 +14,19 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
         private static readonly Type[] ButtonCommandTypes = (from type in typeof(IButtonCommand).Assembly.GetTypes()
                                                              where typeof(IButtonCommand).IsAssignableFrom(type)
                                                              where !type.IsAbstract
+                                                             where type.Name.EndsWith("Command")
                                                              select type).ToArray();
+
+        private static readonly string[] PlayerActionCommandNames = (from field in typeof(GameplayActions).GetFields(BindingFlags.Public | BindingFlags.Instance).Concat(typeof(GameplayActions).GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+                                                                     where field.FieldType == typeof(PlayerAction)
+                                                                     select field.Name).ToArray();
+
+        static ButtonCommandTypeConverter()
+        {
+            Logging.Log("Registered custom command handlers: " + string.Join(", ", ButtonCommandTypes.Select(t => t.Name)));
+            Logging.Log("Registered game command handlers: " + string.Join(", ", PlayerActionCommandNames));
+        }
+
         public bool Accepts(Type type)
         {
             return type == typeof(IButtonCommand);
@@ -47,7 +62,36 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
 
         private IButtonCommand CreateButtonCommand(string name, IParser optionsParser, Mark start)
         {
-            var commandType = GetButtonCommandType(name, start);
+            try
+            {
+                var buttonCommand = GetButtonCommand(name, optionsParser);
+                if (buttonCommand != null)
+                {
+                    return buttonCommand;
+                }
+
+                var playerActionCommand = GetPlayerActionCommand(name);
+                if (playerActionCommand != null)
+                {
+                    return playerActionCommand;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new YamlException(start, start, $"Could not create button command: {e.Message}");
+            }
+
+            throw new YamlException(start, start, $"Unknown button command \"{name}\"");
+        }
+
+        private IButtonCommand GetButtonCommand(string name, IParser optionsParser)
+        {
+            var commandType = Array.Find(ButtonCommandTypes, x => x.Name == name) ?? Array.Find(ButtonCommandTypes, x => x.Name == name + "Command");
+            if (commandType == null)
+            {
+                return null;
+            }
+
             if (optionsParser == null)
             {
                 return (IButtonCommand)Activator.CreateInstance(commandType);
@@ -58,14 +102,20 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
             }
         }
 
-        private Type GetButtonCommandType(string name, Mark start)
+        private IButtonCommand GetPlayerActionCommand(string name)
         {
-            var match = Array.Find(ButtonCommandTypes, x => x.Name == name) ?? Array.Find(ButtonCommandTypes, x => x.Name == name + "Command");
-            if (match == null)
+            if (Array.Find(PlayerActionCommandNames, x => x == name) != null)
             {
-                throw new YamlException(start, start, $"Unknown button command \"{name}\"");
+                return new PlayerActionCommandProxy(name);
             }
-            return match;
+
+            // Also check for "m" + name, for the mRotateHead* commands.
+            if (Array.Find(PlayerActionCommandNames, x => x == "m" + name) != null)
+            {
+                return new PlayerActionCommandProxy("m" + name);
+            }
+
+            return null;
         }
 
         private class PartialCommand
