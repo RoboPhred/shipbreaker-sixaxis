@@ -80,17 +80,17 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
             catch (Exception e)
             {
                 Logging.Log(new Dictionary<string, string> {
-                    { "command", name },
-                    { "mark", start.ToString()},
-                    { "error", e.Message }
+                    { "Command", name },
+                    { "Mark", start.ToString()},
+                    { "Error", e.Message }
                 }, $"Could not create button command {name} at {start}: {e.Message}");
                 return new NullCommand();
             }
 
             Logging.Log(new Dictionary<string, string> {
-                    { "command", name },
-                    { "mark", start.ToString()},
-                }, $"Unknown command {name} at {start}");
+                { "Command", name },
+                { "Mark", start.ToString()},
+            }, $"Unknown command {name} at {start}");
             return new NullCommand();
         }
 
