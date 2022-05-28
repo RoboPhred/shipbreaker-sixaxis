@@ -114,7 +114,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
             }
             else if (result != NtStatus.Success)
             {
-                throw new InvalidOperationException($"{result} while getting scaled usage value for {usagePage} {linkCollection} {usage}");
+                throw new InvalidOperationException($"{result} while getting usage value for {usagePage} {linkCollection} {usage}");
             }
 
             return value;

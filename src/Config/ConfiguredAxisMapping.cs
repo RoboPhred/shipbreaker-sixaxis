@@ -1,3 +1,4 @@
+using System;
 using YamlDotNet.Serialization;
 
 namespace RoboPhredDev.Shipbreaker.SixAxis.Config
@@ -17,8 +18,22 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         [YamlMember(Alias = "gameAxis")]
         public ShipbreakerAxisType GameAxis { get; set; }
 
+        [YamlMember(Alias = "scale")]
+        public float Scale { get; set; }
+
+        [YamlMember(Alias = "deadZone")]
+        public float DeadZone { get; set; }
+
         public ushort Usage => this.AxisUsage;
 
-        public float Scale => this.Invert ? -1 : 1;
+        public float GetValue(float normalizedValue)
+        {
+            if (Math.Abs(normalizedValue) <= this.DeadZone)
+            {
+                return 0.0f;
+            }
+
+            return normalizedValue * this.Scale * (this.Invert ? -1.0f : 1.0f);
+        }
     }
 }

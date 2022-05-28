@@ -8,6 +8,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         ushort Usage { get; }
 
         ShipbreakerAxisType GameAxis { get; }
-        float Scale { get; }
+
+        float GetValue(float normalizedValue);
     }
 }

@@ -114,7 +114,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
                    from device in from d in devices.Values where map.Key.SpecificationMatches(d) select d
                    let axisValue = device.GetAxisValue(new PageAndUsage(device.UsagePage, axisMapping.Usage))
                    where axisValue.HasValue
-                   select axisValue.Value * axisMapping.Scale;
+                   select axisMapping.GetValue(axisValue.Value);
         }
 
         private static float CombineAxisValues(IEnumerable<float> values)
