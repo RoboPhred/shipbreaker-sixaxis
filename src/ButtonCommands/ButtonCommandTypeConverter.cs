@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BBI.Unity.Game;
@@ -78,10 +79,19 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.ButtonCommands
             }
             catch (Exception e)
             {
-                throw new YamlException(start, start, $"Could not create button command: {e.Message}");
+                Logging.Log(new Dictionary<string, string> {
+                    { "command", name },
+                    { "mark", start.ToString()},
+                    { "error", e.Message }
+                }, $"Could not create button command {name} at {start}: {e.Message}");
+                return new NullCommand();
             }
 
-            throw new YamlException(start, start, $"Unknown button command \"{name}\"");
+            Logging.Log(new Dictionary<string, string> {
+                    { "command", name },
+                    { "mark", start.ToString()},
+                }, $"Unknown command {name} at {start}");
+            return new NullCommand();
         }
 
         private IButtonCommand GetButtonCommand(string name, IParser optionsParser)
