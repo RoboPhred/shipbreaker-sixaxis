@@ -19,7 +19,6 @@ axes:
     invert: true
   - axisUsage: 0x35 # GenericDesktop => Rz
     gameAxis: Rx
-
 buttons:
   # Movement
   - buttonUsage: 24
@@ -35,7 +34,7 @@ buttons:
   - buttonUsage: 3
     command: GrappleFire
   - buttonUsage: 9
-    command: Retraction
+    command: RetractionModifier
   - buttonUsage: 27
     command: Throw
   # Cutter
