@@ -30,43 +30,10 @@ Requires [BepInEx 5.0.1](https://github.com/BepInEx/BepInEx/releases) or later.
 4. Create a folder named `SixAxis` in the BepInEx/Plugins folder.
 5. Extract the release zip file to this folder.
 
-## Note for SpaceMouse users
-
-By default, the SpaceMouse driver maps its controls to various utility functions when it does not recognize the program in use. Among other things, it maps the pitch rotation to the scroll wheel. This will conflict with in-game mappings of the scroll wheel, including changing the active scanner mode. You may need to remap the SpaceMouse axes using its software, or unmap the scroll wheel in Shipbreaker.
-
-Be sure to calibrate your device before use. While the SpaceMouse is a remarkably precise device, it tends to require calibration for its deadzone to function correctly.
-
-### Recommended keyboard bindings
-
-As the SpaceMouse provides all 6 axes, it completely supplants a standard computer mouse. I have found the best way to play with it is with one hand on the spacemouse, one hand on the numpad.
-
-Here are some example bindings:
-
-- Gameplay
-  - Select grapple: Numpad /
-  - Select cutter: Numpad \*
-  - Grapple grab / Cutter cut: Numpad 7
-  - Grapple push: Numpad 8
-  - Grapple Pull / Cutter mode: Numpad 9
-  - Interact: Numpad 5
-  - Break: Numpad enter
-  - Toggle scanner: Numpad -
-  - Next scanner mode: Numpad +
-- Interface
-  - Menu up: Numpad 8
-  - Menu Down: Numpad 2
-  - Menu Left: Numpad 4
-  - Menu Right: Numpad 6
-  - Menu Action: Numpad 5
-  - Menu Alternate Action: Numpad 3
-  - Menu Back: Numpad 1
-  - Previous group: Numpad 7
-  - Next group: Numpad 9
-
 ## Configuration
 
 Out of the box, this mod is preconfigured for 3DConnexion [SpaceMouse](https://www.3dconnexion.com/products/spacemouse.html) devices. If you have such a device, no additional
-configuration is needed. However, this mod can be configured to support any HID input device, including non-joystick axis devices.
+configuration is needed. However, this mod can be configured to support any HID input device, including joysticks, gamepads, button boxes, and non-joystick axis devices.
 
 ### Creating a configuration
 
@@ -99,7 +66,7 @@ devices:
     productId: 0x42
 ```
 
-#### Dual Joysticks
+#### Using Multiple Identical Devices
 
 When using two joysticks of the exact same model, the vendor and product ids will be identical. In this case, a `deviceName` must be used. These names uniquely identify the device
 based on what usb port it is plugged into, and will often need to be updated if your usb hardware changes.
@@ -289,6 +256,39 @@ This is a special command that lets you configure a button to have different act
 
 It takes a `duration` value in seconds. If the button is pressed for less than this time, the `shortPress` command will be activated for a short time.
 If the button is held for longer than `duration`, the `longPress` command will be activated, and held down for as long as the button is.
+
+## Note for SpaceMouse users
+
+By default, the SpaceMouse driver maps its controls to various utility functions when it does not recognize the program in use. Among other things, it maps the pitch rotation to the scroll wheel. This will conflict with in-game mappings of the scroll wheel, including changing the active scanner mode. You may need to remap the SpaceMouse axes using its software, or unmap the scroll wheel in Shipbreaker.
+
+Be sure to calibrate your device before use. While the SpaceMouse is a remarkably precise device, it tends to require calibration for its deadzone to function correctly.
+
+### Recommended keyboard bindings
+
+As the SpaceMouse provides all 6 axes, it completely supplants a standard computer mouse. I have found the best way to play with it is with one hand on the spacemouse, one hand on the numpad.
+
+Here are some example bindings:
+
+- Gameplay
+  - Select grapple: Numpad /
+  - Select cutter: Numpad \*
+  - Grapple grab / Cutter cut: Numpad 7
+  - Grapple push: Numpad 8
+  - Grapple Pull / Cutter mode: Numpad 9
+  - Interact: Numpad 5
+  - Break: Numpad enter
+  - Toggle scanner: Numpad -
+  - Next scanner mode: Numpad +
+- Interface
+  - Menu up: Numpad 8
+  - Menu Down: Numpad 2
+  - Menu Left: Numpad 4
+  - Menu Right: Numpad 6
+  - Menu Action: Numpad 5
+  - Menu Alternate Action: Numpad 3
+  - Menu Back: Numpad 1
+  - Previous group: Numpad 7
+  - Next group: Numpad 9
 
 ## Joystick requests welcome
 
