@@ -16,10 +16,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
         private static extern NtStatus HidP_GetButtonCaps(HidPReportType reportType, [Out] HidPButtonCaps[] buttonCaps, ref ushort buttonCapsLength, IntPtr preparsedData);
 
         [DllImport("hid")]
-        private static extern NtStatus HidP_GetUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, out int usageValue, IntPtr preparsedData, byte[] report, uint reportLength);
+        private static extern NtStatus HidP_GetUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, out uint usageValue, IntPtr preparsedData, byte[] report, uint reportLength);
 
         [DllImport("hid")]
-        private static extern NtStatus HidP_GetScaledUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, out int usageValue, IntPtr preparsedData, byte[] report, uint reportLength);
+        private static extern NtStatus HidP_GetScaledUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, out uint usageValue, IntPtr preparsedData, byte[] report, uint reportLength);
 
         [DllImport("hid")]
         private static extern NtStatus HidP_GetUsages(HidPReportType reportType, ushort usagePage, ushort linkCollection, [Out] ushort[] usageList, ref uint usageLength, IntPtr preparsedData, byte[] report, uint reportLength);
@@ -106,7 +106,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
 
         public static int? GetUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, IntPtr preparsedData, byte[] report, uint reportLength)
         {
-            var result = HidP_GetUsageValue(reportType, usagePage, linkCollection, usage, out int value, preparsedData, report, reportLength);
+            var result = HidP_GetUsageValue(reportType, usagePage, linkCollection, usage, out uint value, preparsedData, report, reportLength);
             // FIXME: Allowing incompatible report ids through for now, until we figure out how to detect what the id of a report is.
             if (result == NtStatus.Null || result == NtStatus.IncompatibleReportId)
             {
@@ -117,12 +117,15 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
                 throw new InvalidOperationException($"{result} while getting usage value for {usagePage} {linkCollection} {usage}");
             }
 
-            return value;
+            unchecked
+            {
+                return (short)(ushort)value;
+            }
         }
 
         public static int? GetScaledUsageValue(HidPReportType reportType, ushort usagePage, ushort linkCollection, ushort usage, IntPtr preparsedData, byte[] report, uint reportLength)
         {
-            var result = HidP_GetScaledUsageValue(reportType, usagePage, linkCollection, usage, out int value, preparsedData, report, reportLength);
+            var result = HidP_GetScaledUsageValue(reportType, usagePage, linkCollection, usage, out uint value, preparsedData, report, reportLength);
             // FIXME: Allowing incompatible report ids through for now, until we figure out how to detect what the id of a report is.
             if (result == NtStatus.Null || result == NtStatus.IncompatibleReportId)
             {
@@ -133,7 +136,10 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Native.HID
                 throw new InvalidOperationException($"{result} while getting scaled usage value for {usagePage} {linkCollection} {usage}");
             }
 
-            return value;
+            unchecked
+            {
+                return (short)(ushort)value;
+            }
         }
 
         public static ushort[] GetUsages(HidPReportType reportType, ushort usagePage, ushort linkCollection, IntPtr preparsedData, byte[] report, uint reportLength)
