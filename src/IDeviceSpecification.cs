@@ -9,6 +9,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         int? VendorId { get; set; }
 
         int? ProductId { get; set; }
+
+        string Role { get; set; }
     }
 
     static class DeviceSpecificationUtils

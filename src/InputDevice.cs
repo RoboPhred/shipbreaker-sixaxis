@@ -11,6 +11,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
         public int VendorId { get; }
         public int ProductId { get; }
 
+        public string Role { get; set; }
+
         public ushort UsagePage { get; }
 
         private readonly Dictionary<PageAndUsage, float> normalizedAxes = new();
