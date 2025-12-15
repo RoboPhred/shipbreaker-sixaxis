@@ -13,5 +13,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 
         [YamlMember(Alias = "productId")]
         public int? ProductId { get; set; }
+
+        [YamlMember(Alias = "role")]
+        public string Role { get; set; }
     }
 }

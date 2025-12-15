@@ -70,15 +70,17 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             if (!devices.TryGetValue(deviceName, out var controller))
             {
                 controller = new InputDevice(deviceName, device.VendorId, device.ProductId, device.UsagePage);
-                var newMapping = inputMaps.FirstOrDefault(x => x.Key.SpecificationMatches(device));
+                var matchingSpec = inputMaps.Keys.FirstOrDefault(spec => spec.SpecificationMatches(device));
+                if (matchingSpec != null) controller.Role = matchingSpec.Role;
+
                 devices.Add(deviceName, controller);
                 Logging.Log(new Dictionary<string, string>
                     {
                         {"VendorId", device.VendorId.ToString("X")},
                         {"ProductId", device.ProductId.ToString("X")},
                         {"DeviceName", deviceName},
-                        {"ConfigFile", (newMapping.Key != null) ? newMapping.Value.FileName : null},
-                    }, $"New device discovered.   Device {device.DeviceName} " + ((newMapping.Key != null) ? $"has input mapping {newMapping.Value.FileName}" : "has no input mapping."));
+                        {"Role", controller.Role}
+                    }, $"New device discovered.   Device {device.DeviceName} with role {controller.Role}");
             }
 
             return controller;
@@ -90,7 +92,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             {
                 foreach (var pressed in frame.ButtonsPressed)
                 {
-                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == pressed.Usage))
+                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == pressed.Usage && (string.IsNullOrEmpty(x.Device) || x.Device == device.Role)))
                     {
                         m.Command.Press();
                     }
@@ -98,7 +100,7 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
 
                 foreach (var released in frame.ButtonsReleased)
                 {
-                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == released.Usage))
+                    foreach (var m in mapping.Value.Buttons.Where(x => x.Usage == released.Usage && (string.IsNullOrEmpty(x.Device) || x.Device == device.Role)))
                     {
                         m.Command.Release();
                     }
@@ -111,7 +113,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
             return from map in inputMaps
                    from axisMapping in map.Value.Axes
                    where axisMapping.GameAxis == axisType
-                   from device in from d in devices.Values where map.Key.SpecificationMatches(d) select d
+                   from device in devices.Values
+                   where map.Key.SpecificationMatches(device)
+                   where string.IsNullOrEmpty(axisMapping.Device) || axisMapping.Device == device.Role
                    let axisValue = device.GetAxisValue(new PageAndUsage(device.UsagePage, axisMapping.Usage))
                    where axisValue.HasValue
                    select axisMapping.GetValue(axisValue.Value);

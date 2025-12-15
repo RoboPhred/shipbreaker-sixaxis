@@ -7,6 +7,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
 {
     class ConfiguredButtonMapping : IButtonMapping, IAfterYamlDeserialization
     {
+        [YamlMember(Alias = "device")]
+        public string Device { get; set; }
+
         [YamlMember(Alias = "buttonUsage")]
         public ushort ButtonUsage { get; set; }
 

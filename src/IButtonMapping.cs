@@ -7,6 +7,8 @@ namespace RoboPhredDev.Shipbreaker.SixAxis
     {
         ushort Usage { get; }
 
+        string Device { get; }
+
         IButtonCommand Command { get; }
     }
 }

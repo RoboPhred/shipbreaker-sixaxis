@@ -9,6 +9,9 @@ namespace RoboPhredDev.Shipbreaker.SixAxis.Config
         //  Seems to be seperated by Link / Collection. Is there a raw ID we can get?
         //  Other HID tools seem to get an axis index.  They might be using the index of the axis in its report
 
+        [YamlMember(Alias = "device")]
+        public string Device { get; set; }
+
         [YamlMember(Alias = "axisUsage")]
         public ushort AxisUsage { get; set; }
 
